@@ -1,16 +1,15 @@
 import SnackBar from "react-native-snackbar-component";
-import { useSelector } from "react-redux";
-import { selectAlertMessage } from "../../../redux/common";
+import { useDispatch, useSelector } from "react-redux";
+import { selectAlertMessage, setAlertMessage } from "../../../redux/common";
 
 const Snackbar = () => {
+  const dispatch = useDispatch();
   const alertMessageText = useSelector(selectAlertMessage);
   return (
     <SnackBar
       visible={!!alertMessageText}
       textMessage={alertMessageText}
-      actionHandler={() => {
-        console.log("snackbar button clicked!");
-      }}
+      actionHandler={() => dispatch(setAlertMessage(""))}
       actionText="OK"
     />
   );

@@ -1,10 +1,10 @@
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Login from "../screens/Login";
 import Register from "../screens/Register";
 import { Ionicons } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
 import palette from "../common/palette";
+import Fonts from "../common/Fonts";
 
 const AdminTabs = createBottomTabNavigator();
 
@@ -45,7 +45,7 @@ function AdminStackComponent() {
         tabBarInactiveTintColor: "gray",
         headerShown: false,
         tabBarLabelStyle: {
-          fontFamily: "MontserratMedium",
+          fontFamily: Fonts.MontserratMedium,
         },
       })}
     >

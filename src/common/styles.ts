@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import Fonts from "./Fonts";
 import palette from "./palette";
 
 export default StyleSheet.create({
@@ -15,7 +16,7 @@ export default StyleSheet.create({
     padding: 5,
     paddingHorizontal: 10,
     borderRadius: 5,
-    fontFamily: "MontserratMedium",
+    fontFamily: Fonts.MontserratMedium,
   },
   buttonsContainer: {
     width: "100%",
@@ -23,16 +24,18 @@ export default StyleSheet.create({
   },
   button: {
     backgroundColor: palette.primary,
-    marginVertical: 3,
-    marginHorizontal: "15%",
+    width: "100%",
+    height: 50,
+    borderRadius: 25,
     alignItems: "center",
     justifyContent: "center",
-    padding: 10,
-    borderRadius: 5,
   },
   buttonText: {
     color: palette.white,
-    fontFamily: "MontserratMedium",
+    fontSize: 14,
+    textTransform: "capitalize",
+    letterSpacing: 1,
+    fontFamily: Fonts.MontserratMedium,
   },
   buttonOutline: {
     backgroundColor: "white",
@@ -41,7 +44,7 @@ export default StyleSheet.create({
   },
   buttonOutlineText: {
     color: palette.black,
-    fontFamily: "MontserratMedium",
+    fontFamily: Fonts.MontserratMedium,
   },
   registerImage: {
     alignSelf: "center",
