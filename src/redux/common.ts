@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const commonSlice = createSlice({
   name: "common",
   initialState: {
-    alertMessageText: 0,
+    alertMessageText: "",
   },
   reducers: {
     setAlertMessage: (state, action) => {

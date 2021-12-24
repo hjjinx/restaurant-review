@@ -6,7 +6,7 @@ const AuthenticationStack = createNativeStackNavigator();
 
 function AuthenticationStackComponent() {
   return (
-    <AuthenticationStack.Navigator>
+    <AuthenticationStack.Navigator screenOptions={{ headerShown: false }}>
       <AuthenticationStack.Screen name="Login" component={Login} />
       <AuthenticationStack.Screen name="Register" component={Register} />
     </AuthenticationStack.Navigator>

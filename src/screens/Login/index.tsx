@@ -1,17 +1,13 @@
 import React, { useState } from "react";
-import {
-  Text,
-  TextInput,
-  KeyboardAvoidingView,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import styles from "./styles";
+import { Text, TextInput, TouchableOpacity, View, Image } from "react-native";
+import styles from "../../common/styles";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../../firebase";
 import { errorHandler } from "../../common/utils";
 import { useDispatch } from "react-redux";
 import { setAlertMessage } from "../../redux/common";
+import images from "../../../assets/images";
+import { AreaView } from "../../common/components";
 
 const Login = ({ navigation }: any) => {
   const [email, setEmail] = useState("");
@@ -21,11 +17,7 @@ const Login = ({ navigation }: any) => {
 
   const signIn = async () => {
     try {
-      const signInResult = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
+      await signInWithEmailAndPassword(auth, email, password);
       dispatch(setAlertMessage("Success!"));
     } catch (err) {
       console.log(JSON.stringify(err, null, 2));
@@ -34,32 +26,39 @@ const Login = ({ navigation }: any) => {
     }
   };
   return (
-    <KeyboardAvoidingView behavior="padding" style={styles.container}>
-      <TextInput
-        placeholder="Email Address.."
-        value={email}
-        onChangeText={setEmail}
-        style={styles.input}
+    <AreaView>
+      <Image
+        source={images.Login}
+        style={styles.loginImage}
+        resizeMode="contain"
       />
-      <TextInput
-        placeholder="Password.."
-        value={password}
-        onChangeText={setPassword}
-        style={styles.input}
-        secureTextEntry
-      />
-      <View style={styles.buttonsContainer}>
-        <TouchableOpacity style={styles.button} onPress={signIn}>
-          <Text>Login</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.button, styles.buttonOutline]}
-          onPress={() => navigation.navigate("Register")}
-        >
-          <Text>Register</Text>
-        </TouchableOpacity>
+      <View style={styles.container}>
+        <TextInput
+          placeholder="Email Address.."
+          value={email}
+          onChangeText={setEmail}
+          style={styles.input}
+        />
+        <TextInput
+          placeholder="Password.."
+          value={password}
+          onChangeText={setPassword}
+          style={styles.input}
+          secureTextEntry
+        />
+        <View style={styles.buttonsContainer}>
+          <TouchableOpacity style={styles.button} onPress={signIn}>
+            <Text style={styles.buttonText}>Login</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.button, styles.buttonOutline]}
+            onPress={() => navigation.navigate("Register")}
+          >
+            <Text style={styles.buttonOutlineText}>Register</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-    </KeyboardAvoidingView>
+    </AreaView>
   );
 };
 
