@@ -1,10 +1,12 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import Login from "../screens/Login";
 import Register from "../screens/Register";
 import { Ionicons } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
 import palette from "../common/palette";
 import Fonts from "../common/Fonts";
+import Restaurants from "../screens/Restaurants";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import AddRestaurant from "../screens/Restaurants/AddRestaurant";
 
 const AdminTabs = createBottomTabNavigator();
 
@@ -49,10 +51,27 @@ function AdminStackComponent() {
         },
       })}
     >
-      <AdminTabs.Screen name="Restaurants" component={Login} />
+      <AdminTabs.Screen
+        name="Restaurants"
+        component={RestaurantStackComponent}
+      />
       <AdminTabs.Screen name="Users" component={Register} />
     </AdminTabs.Navigator>
   );
 }
+
+const RestaurantStack = createNativeStackNavigator();
+const RestaurantStackComponent = () => {
+  return (
+    <RestaurantStack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <RestaurantStack.Screen name="Restaurants" component={Restaurants} />
+      <RestaurantStack.Screen name="AddRestaurant" component={AddRestaurant} />
+    </RestaurantStack.Navigator>
+  );
+};
 
 export default AdminStackComponent;
