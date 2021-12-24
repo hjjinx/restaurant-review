@@ -6,10 +6,9 @@ import {
 } from "./src/navigation";
 import { Provider } from "react-redux";
 import store from "./src/redux";
-import { Snackbar } from "./src/common/components";
+import { OverlayLoader, Snackbar } from "./src/common/components";
 import { auth } from "./firebase";
 import { useFonts } from "expo-font";
-import { View } from "react-native";
 
 export default function App() {
   const [user, setUser] = useState<any>();
@@ -27,7 +26,7 @@ export default function App() {
     });
     return unsubscribe;
   }, []);
-  if (!fontsLoaded) return <View />;
+  if (!fontsLoaded) return <OverlayLoader />;
   return (
     <Provider store={store}>
       <NavigationContainer>

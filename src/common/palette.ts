@@ -8,4 +8,5 @@ export default {
   lightWhitebackground: "#f2f2f2",
   placeholder: "rgb(199,199,199)",
   border: "#ddd",
+  modalBg: "rgba(0,0,0, 0.4)",
 };
