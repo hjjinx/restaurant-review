@@ -16,60 +16,11 @@ import {
   selectIsFetchingRestaurantList,
   selectRestaurantList,
 } from "../../redux/restaurants";
+import { selectUser } from "../../redux/user";
 import RestaurantCard from "./RestaurantCard";
 
-const mock = [
-  {
-    id: 1,
-    name: "Boathouse",
-    address: "Elante Mall, Chandigarh, Industrial Area Phase I, India",
-    rating: 4.2,
-  },
-  {
-    id: 2,
-    name: "Boathouse",
-    address: "Elante Mall, Chandigarh, Industrial Area Phase I, India",
-    rating: 4.2,
-  },
-  {
-    id: 3,
-    name: "Boathouse",
-    address: "Elante Mall, Chandigarh, Industrial Area Phase I, India",
-    rating: 4.2,
-  },
-  {
-    id: 4,
-    name: "Boathouse",
-    address: "Elante Mall, Chandigarh, Industrial Area Phase I, India",
-    rating: 4.2,
-  },
-  {
-    id: 5,
-    name: "Boathouse",
-    address: "Elante Mall, Chandigarh, Industrial Area Phase I, India",
-    rating: 4.2,
-  },
-  {
-    id: 6,
-    name: "Boathouse",
-    address: "Elante Mall, Chandigarh, Industrial Area Phase I, India",
-    rating: 4.2,
-  },
-  {
-    id: 7,
-    name: "Boathouse",
-    address: "Elante Mall, Chandigarh, Industrial Area Phase I, India",
-    rating: 4.2,
-  },
-  {
-    id: 8,
-    name: "Boathouse",
-    address: "Elante Mall, Chandigarh, Industrial Area Phase I, India",
-    rating: 4.2,
-  },
-];
-
 const Restaurants = ({ navigation }: any) => {
+  const user = useSelector(selectUser);
   const restaurantList = useSelector(selectRestaurantList);
   const loading = useSelector(selectIsFetchingRestaurantList);
   const dispatch = useDispatch();
@@ -112,13 +63,15 @@ const Restaurants = ({ navigation }: any) => {
           />
         )}
       </View>
-      <TouchableOpacity
-        style={styles.fabButton}
-        activeOpacity={0.4}
-        onPress={() => navigation.navigate("AddRestaurant")}
-      >
-        <Entypo name="plus" style={styles.fabPlusIcon} />
-      </TouchableOpacity>
+      {user?.isAdmin && (
+        <TouchableOpacity
+          style={styles.fabButton}
+          activeOpacity={0.4}
+          onPress={() => navigation.navigate("AddRestaurant")}
+        >
+          <Entypo name="plus" style={styles.fabPlusIcon} />
+        </TouchableOpacity>
+      )}
     </AreaView>
   );
 };

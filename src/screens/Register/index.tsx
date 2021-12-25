@@ -40,7 +40,7 @@ const Register = ({ navigation }: any) => {
         name,
         isAdmin: false,
       });
-      dispatch(setUser({ name, isAdmin: false }));
+      dispatch(setUser({ name, isAdmin: false, uid: user.user.uid }));
       dispatch(setAlertMessage("Success!"));
       setLoading(false);
     } catch (err) {

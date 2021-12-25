@@ -2,14 +2,23 @@ import { configureStore } from "@reduxjs/toolkit";
 import commonReducer from "./common";
 import restaurantsReducer from "./restaurants";
 import userReducer from "./user";
-import { persistStore, persistReducer } from "redux-persist";
-import storage from "redux-persist/lib/storage";
+import {
+  persistStore,
+  persistReducer,
+  FLUSH,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER,
+  REHYDRATE,
+} from "redux-persist";
 import { combineReducers } from "redux";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const persistConfig = {
   key: "root",
   version: 1,
-  storage,
+  storage: AsyncStorage,
   whitelist: ["user"],
 };
 
@@ -23,6 +32,12 @@ const persistedReducer = persistReducer(persistConfig, combinedReducer);
 
 const store = configureStore({
   reducer: persistedReducer,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+      },
+    }),
 });
 
 export const persistor = persistStore(store);

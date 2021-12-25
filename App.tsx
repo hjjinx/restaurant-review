@@ -11,6 +11,9 @@ import { auth } from "./firebase";
 import { useFonts } from "expo-font";
 import { selectUser, setUser } from "./src/redux/user";
 import { PersistGate } from "redux-persist/integration/react";
+import { LogBox } from "react-native";
+
+LogBox.ignoreLogs(["Setting a timer"]);
 
 const App = () => {
   const user = useSelector(selectUser);
@@ -29,7 +32,11 @@ const App = () => {
     return unsubscribe;
   }, []);
   if (!fontsLoaded) return <OverlayLoader />;
-  return !user ? <AuthenticationStackComponent /> : <AdminStackComponent />;
+  return !user?.uid ? (
+    <AuthenticationStackComponent />
+  ) : (
+    <AdminStackComponent />
+  );
 };
 
 export default () => (

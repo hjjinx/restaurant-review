@@ -9,20 +9,23 @@ import {
   Text,
   ScrollView,
 } from "react-native";
+import { useSelector } from "react-redux";
 import { OverlayLoader } from "../../common/components";
 import Fonts from "../../common/Fonts";
 import palette from "../../common/palette";
 import { roundRating } from "../../common/utils";
 import { getRestaurant } from "../../redux/restaurants";
+import { selectUser } from "../../redux/user";
 import ReviewCard from "./ReviewCard";
 
 const RestaurantDetail = ({ navigation, route }: any) => {
+  const user = useSelector(selectUser);
   const [loading, setLoading] = useState(false);
   const [restaurant, setRestaurant] = useState<any>();
   const _getRestaurant = async (restaurantId: string) => {
     try {
       setLoading(true);
-      const data = await getRestaurant(restaurantId);
+      const data = await getRestaurant(restaurantId, user);
       setRestaurant(data);
       setLoading(false);
     } catch (err) {
@@ -36,6 +39,8 @@ const RestaurantDetail = ({ navigation, route }: any) => {
   const highestRatedReview = restaurant?.highestRatedReview;
   const lowestRatedReview = restaurant?.lowestRatedReview;
   const latestRatedReview = restaurant?.latestRatedReview;
+  const loggedInUserReview = restaurant?.loggedInUserReview;
+  console.log({ loggedInUserReview });
   return (
     <SafeAreaView style={styles.areaView}>
       {loading ? (
@@ -79,6 +84,7 @@ const RestaurantDetail = ({ navigation, route }: any) => {
                             : "star-o"
                         }
                         style={styles.star}
+                        key={`star-rating-${i}`}
                       />
                     ))}
 
@@ -91,43 +97,50 @@ const RestaurantDetail = ({ navigation, route }: any) => {
                   </Text>
                 </View>
               </View>
-              <View style={styles.reviewSummaryContainer}>
-                <Text style={styles.reviewSummaryText}>
-                  Highest Rated Review
-                </Text>
-                <ReviewCard
-                  userName={highestRatedReview?.createdBy}
-                  date={
-                    new Date(highestRatedReview?.dateOfVisit?.seconds * 1000)
-                  }
-                  rating={roundRating(highestRatedReview?.rating)}
-                  comment={highestRatedReview?.comment}
-                />
-              </View>
-              <View style={styles.reviewSummaryContainer}>
-                <Text style={styles.reviewSummaryText}>
-                  Lowest Rated Review
-                </Text>
-                <ReviewCard
-                  userName={lowestRatedReview?.createdBy}
-                  date={
-                    new Date(lowestRatedReview?.dateOfVisit?.seconds * 1000)
-                  }
-                  rating={roundRating(lowestRatedReview?.rating)}
-                  comment={lowestRatedReview?.comment}
-                />
-              </View>
-              <View style={styles.reviewSummaryContainer}>
-                <Text style={styles.reviewSummaryText}>Latest Review</Text>
-                <ReviewCard
-                  userName={latestRatedReview?.createdBy}
-                  date={
-                    new Date(latestRatedReview?.dateOfVisit?.seconds * 1000)
-                  }
-                  rating={roundRating(latestRatedReview?.rating)}
-                  comment={latestRatedReview?.comment}
-                />
-              </View>
+              {!!highestRatedReview?.rating && (
+                <View style={styles.reviewSummaryContainer}>
+                  <Text style={styles.reviewSummaryText}>
+                    Highest Rated Review
+                  </Text>
+                  <ReviewCard
+                    userName={highestRatedReview?.createdBy}
+                    date={
+                      new Date(highestRatedReview?.dateOfVisit?.seconds * 1000)
+                    }
+                    rating={roundRating(highestRatedReview?.rating)}
+                    comment={highestRatedReview?.comment}
+                  />
+                </View>
+              )}
+
+              {!!lowestRatedReview?.rating && (
+                <View style={styles.reviewSummaryContainer}>
+                  <Text style={styles.reviewSummaryText}>
+                    Lowest Rated Review
+                  </Text>
+                  <ReviewCard
+                    userName={lowestRatedReview?.createdBy}
+                    date={
+                      new Date(lowestRatedReview?.dateOfVisit?.seconds * 1000)
+                    }
+                    rating={roundRating(lowestRatedReview?.rating)}
+                    comment={lowestRatedReview?.comment}
+                  />
+                </View>
+              )}
+              {!!latestRatedReview?.rating && (
+                <View style={styles.reviewSummaryContainer}>
+                  <Text style={styles.reviewSummaryText}>Latest Review</Text>
+                  <ReviewCard
+                    userName={latestRatedReview?.createdBy}
+                    date={
+                      new Date(latestRatedReview?.dateOfVisit?.seconds * 1000)
+                    }
+                    rating={roundRating(latestRatedReview?.rating)}
+                    comment={latestRatedReview?.comment}
+                  />
+                </View>
+              )}
             </View>
           </ScrollView>
         </>

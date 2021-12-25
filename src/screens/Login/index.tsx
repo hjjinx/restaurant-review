@@ -33,7 +33,7 @@ const Login = ({ navigation }: any) => {
       setLoading(true);
       const user = await signInWithEmailAndPassword(auth, email, password);
       const userData = await getDoc(doc(firestore, `users/${user.user.uid}`));
-      dispatch(setUser(userData.data()));
+      dispatch(setUser({ ...userData.data(), uid: user.user.uid }));
       dispatch(setAlertMessage("Success!"));
       setLoading(false);
     } catch (err) {
