@@ -24,7 +24,6 @@ const RestaurantDetail = ({ navigation, route }: any) => {
       setLoading(true);
       const data = await getRestaurant(restaurantId);
       setRestaurant(data);
-      console.log({ data });
       setLoading(false);
     } catch (err) {
       setLoading(false);
@@ -97,7 +96,7 @@ const RestaurantDetail = ({ navigation, route }: any) => {
                   Highest Rated Review
                 </Text>
                 <ReviewCard
-                  userName="Himanshu Jain"
+                  userName={highestRatedReview?.createdBy}
                   date={
                     new Date(highestRatedReview?.dateOfVisit?.seconds * 1000)
                   }
@@ -110,7 +109,7 @@ const RestaurantDetail = ({ navigation, route }: any) => {
                   Lowest Rated Review
                 </Text>
                 <ReviewCard
-                  userName="Himanshu Jain"
+                  userName={lowestRatedReview?.createdBy}
                   date={
                     new Date(lowestRatedReview?.dateOfVisit?.seconds * 1000)
                   }
@@ -121,7 +120,7 @@ const RestaurantDetail = ({ navigation, route }: any) => {
               <View style={styles.reviewSummaryContainer}>
                 <Text style={styles.reviewSummaryText}>Latest Review</Text>
                 <ReviewCard
-                  userName="Himanshu Jain"
+                  userName={latestRatedReview?.createdBy}
                   date={
                     new Date(latestRatedReview?.dateOfVisit?.seconds * 1000)
                   }

@@ -70,33 +70,61 @@ export const getRestaurant = async (restaurantId: string) => {
     const uri = await getDownloadURL(
       ref(storage, `restaurantImages/${restaurantId}`)
     );
-    const highestRatedReviewSnapshot = await getDocs(
-      query(
-        collection(firestore, `restaurants/${restaurantId}/reviews`),
-        orderBy("rating", "desc"),
-        limit(1)
-      )
-    );
-    const highestRatedReview =
-      highestRatedReviewSnapshot?.docs?.[0]?.data() || {};
+    let [highestRatedReview, lowestRatedReview, latestRatedReview] =
+      await Promise.all([
+        new Promise(async (resolve, reject) => {
+          const highestRatedReviewSnapshot = await getDocs(
+            query(
+              collection(firestore, `restaurants/${restaurantId}/reviews`),
+              orderBy("rating", "desc"),
+              limit(1)
+            )
+          );
+          let highestRatedReview;
+          if (!highestRatedReviewSnapshot.empty) {
+            highestRatedReview =
+              highestRatedReviewSnapshot?.docs?.[0]?.data() || {};
+            const user = await getDoc(highestRatedReview.createdBy);
+            highestRatedReview.createdBy = user?.data()?.name;
+          }
+          resolve(highestRatedReview);
+        }),
+        new Promise(async (resolve, reject) => {
+          const lowestRatedReviewSnapshot = await getDocs(
+            query(
+              collection(firestore, `restaurants/${restaurantId}/reviews`),
+              orderBy("rating", "asc"),
+              limit(1)
+            )
+          );
+          let lowestRatedReview;
+          if (!lowestRatedReviewSnapshot.empty) {
+            lowestRatedReview =
+              lowestRatedReviewSnapshot?.docs?.[0]?.data() || {};
+            const user = await getDoc(lowestRatedReview.createdBy);
+            lowestRatedReview.createdBy = user?.data()?.name;
+          }
+          resolve(lowestRatedReview);
+        }),
+        new Promise(async (resolve, reject) => {
+          const latestRatedReviewSnapshot = await getDocs(
+            query(
+              collection(firestore, `restaurants/${restaurantId}/reviews`),
+              orderBy("dateOfVisit", "desc"),
+              limit(1)
+            )
+          );
+          let latestRatedReview;
+          if (!latestRatedReviewSnapshot.empty) {
+            latestRatedReview =
+              latestRatedReviewSnapshot?.docs?.[0]?.data() || {};
+            const user = await getDoc(latestRatedReview.createdBy);
+            latestRatedReview.createdBy = user?.data()?.name;
+          }
+          resolve(latestRatedReview);
+        }),
+      ]);
 
-    const lowestRatedReviewSnapshot = await getDocs(
-      query(
-        collection(firestore, `restaurants/${restaurantId}/reviews`),
-        orderBy("rating", "asc"),
-        limit(1)
-      )
-    );
-    const lowestRatedReview = lowestRatedReviewSnapshot?.docs?.[0]?.data();
-
-    const latestRatedReviewSnapshot = await getDocs(
-      query(
-        collection(firestore, `restaurants/${restaurantId}/reviews`),
-        orderBy("dateOfVisit", "desc"),
-        limit(1)
-      )
-    );
-    const latestRatedReview = latestRatedReviewSnapshot?.docs?.[0]?.data();
     if (restaurantData.exists()) {
       return {
         ...restaurantData.data(),
