@@ -1,5 +1,6 @@
-import React from "react";
-import { View, StyleSheet, Text, TouchableOpacity, Image } from "react-native";
+import { FontAwesome } from "@expo/vector-icons";
+import React, { useMemo } from "react";
+import { View, StyleSheet, Text, Image } from "react-native";
 import Fonts from "../../../common/Fonts";
 import palette from "../../../common/palette";
 
@@ -7,12 +8,13 @@ type RestaurantCardProps = {
   name: string;
   address: string;
   rating: number;
-  onPress?: () => void;
+  numRatings: number;
   image?: any;
 };
 
 const RestaurantCard = (props: RestaurantCardProps) => {
-  const { name, address, rating, onPress, image } = props;
+  const { name, address, rating, numRatings, image } = props;
+  const stars = useMemo(() => Math.round(rating * 2) / 2, [rating]);
   return (
     <View style={styles.container}>
       <View style={styles.textContainer}>
@@ -20,9 +22,22 @@ const RestaurantCard = (props: RestaurantCardProps) => {
         <Text style={styles.darkGrayRegular12} numberOfLines={2}>
           {address}
         </Text>
-        <TouchableOpacity onPress={onPress}>
-          <Text style={styles.primaryRegular12}>{rating}</Text>
-        </TouchableOpacity>
+        <View style={styles.ratingContainer}>
+          {[1, 2, 3, 4, 5].map((i) => (
+            <FontAwesome
+              name={
+                stars - i === -0.5
+                  ? "star-half-o"
+                  : stars >= i
+                  ? "star"
+                  : "star-o"
+              }
+              style={styles.star}
+            />
+          ))}
+          <Text style={styles.rating}>{rating}</Text>
+          <Text style={styles.numRatings}> ({numRatings})</Text>
+        </View>
       </View>
       <Image source={image} style={styles.image} resizeMode="stretch" />
     </View>
@@ -56,16 +71,30 @@ const styles = StyleSheet.create({
     color: palette.textPrimary,
     fontFamily: Fonts.MontserratMedium,
   },
-  primaryRegular12: {
+  rating: {
     color: palette.primary,
     fontSize: 12,
     fontFamily: Fonts.MontserratRegular,
+  },
+  numRatings: {
+    color: palette.textPrimary,
+    fontSize: 12,
+    fontFamily: Fonts.MontserratLight,
   },
   textContainer: {
     paddingLeft: 16,
     marginRight: 8,
     flex: 1,
     justifyContent: "center",
+  },
+  ratingContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  star: {
+    marginRight: 3,
+    color: palette.primary,
+    fontSize: 12,
   },
 });
 

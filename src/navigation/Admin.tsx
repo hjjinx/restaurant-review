@@ -7,6 +7,7 @@ import Fonts from "../common/Fonts";
 import Restaurants from "../screens/Restaurants";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import AddRestaurant from "../screens/Restaurants/AddRestaurant";
+import RestaurantDetail from "../screens/Restaurant";
 
 const AdminTabs = createBottomTabNavigator();
 
@@ -70,6 +71,10 @@ const RestaurantStackComponent = () => {
     >
       <RestaurantStack.Screen name="RestaurantsList" component={Restaurants} />
       <RestaurantStack.Screen name="AddRestaurant" component={AddRestaurant} />
+      <RestaurantStack.Screen
+        name="RestaurantDetail"
+        component={RestaurantDetail}
+      />
     </RestaurantStack.Navigator>
   );
 };

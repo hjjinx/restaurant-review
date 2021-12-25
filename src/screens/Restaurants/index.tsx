@@ -72,7 +72,6 @@ const mock = [
 const Restaurants = ({ navigation }: any) => {
   const restaurantList = useSelector(selectRestaurantList);
   const loading = useSelector(selectIsFetchingRestaurantList);
-  console.log({ restaurantList });
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(getRestaurants(0));
@@ -89,16 +88,24 @@ const Restaurants = ({ navigation }: any) => {
           <FlatList
             data={restaurantList}
             renderItem={({ item }) => (
-              <View style={{ paddingBottom: 16 }}>
+              <TouchableOpacity
+                style={{ paddingBottom: 16 }}
+                onPress={() =>
+                  navigation.navigate("RestaurantDetail", {
+                    restaurantId: item.id,
+                  })
+                }
+              >
                 <RestaurantCard
                   name={item.name}
                   address={item.address}
-                  rating={item.rating}
+                  rating={item.avgRating}
+                  numRatings={item.numRatings}
                   image={{
                     uri: item.imageUri,
                   }}
                 />
-              </View>
+              </TouchableOpacity>
             )}
             keyExtractor={(item) => String(item.id)}
             showsVerticalScrollIndicator={false}

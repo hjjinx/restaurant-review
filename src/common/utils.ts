@@ -29,3 +29,19 @@ export const convertFileUriToBlob = async (uri: string): Promise<Blob> => {
   });
   return blob;
 };
+
+export const ratingColor = (rating: number) => {
+  rating = Math.round(rating);
+  switch (rating) {
+    case 5:
+      return "#57e32c";
+    case 4:
+      return "#b7dd29";
+    case 3:
+      return "#ffe234";
+    case 2:
+      return "#ffa534";
+    case 1:
+      return "#ff4545";
+  }
+};
