@@ -15,7 +15,7 @@ import palette from "../../palette";
 type ImageUploadBoxProps = {
   image?: any;
   setImage: (s: any) => void;
-  error?: string | false | undefined;
+  error?: any;
 };
 
 const ImageUploadBox = ({ image, setImage, error }: ImageUploadBoxProps) => {
@@ -31,13 +31,16 @@ const ImageUploadBox = ({ image, setImage, error }: ImageUploadBoxProps) => {
 
   const onUploadImage = () =>
     ImagePicker.launchImageLibraryAsync({
-      aspect: [16, 9],
+      aspect: [16, 10],
       quality: 0.5,
       allowsEditing: true,
-      base64: true,
     }).then((image) => {
-      if (image && image.base64) {
-        setImage(image.base64);
+      if (image && image.uri) {
+        setImage({
+          uri: image.uri,
+          fileName: new Date().getTime(),
+          type: "image/png",
+        });
       }
     });
 
@@ -46,10 +49,13 @@ const ImageUploadBox = ({ image, setImage, error }: ImageUploadBoxProps) => {
       aspect: [16, 10],
       quality: 0.5,
       allowsEditing: true,
-      base64: true,
     }).then((image) => {
-      if (image && image.base64) {
-        setImage(image.base64);
+      if (image && image.uri) {
+        setImage({
+          uri: image.uri,
+          fileName: new Date().getTime(),
+          type: "image/png",
+        });
       }
     });
 

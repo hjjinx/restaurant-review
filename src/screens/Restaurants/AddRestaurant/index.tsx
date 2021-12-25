@@ -1,21 +1,50 @@
-import React from "react";
+import React, { useState } from "react";
 import { AreaView, Button, ImageUploadBox } from "../../../common/components";
 import Header from "../../../common/components/Header";
 import { Formik } from "formik";
 import * as Yup from "yup";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Platform } from "react-native";
 import Input from "../../../common/components/Input";
 import palette from "../../../common/palette";
 import TextArea from "../../../common/components/TextArea";
+import { firestore, storage } from "../../../../firebase";
+import { addDoc, collection } from "firebase/firestore";
+import { useDispatch } from "react-redux";
+import { setAlertMessage } from "../../../redux/common";
+import { ref, uploadBytes } from "firebase/storage";
+import { useNavigation } from "@react-navigation/native";
+import { convertFileUriToBlob } from "../../../common/utils";
 
 const formSchema = Yup.object().shape({
   name: Yup.string().required("Name is required!"),
   address: Yup.string().required("Address is required!"),
-  image: Yup.string().required("Image is required!"),
+  image: Yup.object().required("Image is required!"),
 });
 
 const AddRestaurant = () => {
-  const addRestaurant = (values: any) => {};
+  const [loading, setLoading] = useState(false);
+  const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const addRestaurant = async (values: any) => {
+    setLoading(true);
+    try {
+      let uri = values.image.uri;
+      const uploadUri =
+        Platform.OS === "ios" ? uri.replace("file://", "") : uri;
+      const blob = await convertFileUriToBlob(uploadUri);
+      delete values.image;
+
+      const doc = await addDoc(collection(firestore, "restaurants"), values);
+      const restaurantImageRef = ref(storage, `restaurantImages/${doc.id}`);
+      await uploadBytes(restaurantImageRef, blob);
+      dispatch(setAlertMessage("Success!"));
+      navigation.goBack();
+    } catch (err) {
+      console.log({ err });
+      dispatch(setAlertMessage("There was an error. Please try again later."));
+    }
+    setLoading(false);
+  };
   return (
     <AreaView>
       <Header heading={"Add Restaurant"} canGoBack />
@@ -24,7 +53,7 @@ const AddRestaurant = () => {
           initialValues={{
             name: "",
             address: "",
-            image: "",
+            image: "" as any,
           }}
           onSubmit={addRestaurant}
           validationSchema={formSchema}
@@ -44,11 +73,7 @@ const AddRestaurant = () => {
                     setFieldTouched("image");
                     setValues({ ...values, image: s });
                   }}
-                  image={
-                    values.image
-                      ? { uri: `data:image/png;base64,${values.image}` }
-                      : ""
-                  }
+                  image={values.image?.uri ? { uri: values.image.uri } : null}
                   error={touched.image && errors.image}
                 />
               </View>
@@ -83,8 +108,9 @@ const AddRestaurant = () => {
               <View>
                 <Button
                   onPress={submitForm}
-                  text="Submit"
+                  text="+ Add"
                   style={{ marginTop: 10 }}
+                  loading={loading}
                 />
               </View>
             </>

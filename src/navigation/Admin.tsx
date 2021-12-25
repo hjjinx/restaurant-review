@@ -68,7 +68,7 @@ const RestaurantStackComponent = () => {
         headerShown: false,
       }}
     >
-      <RestaurantStack.Screen name="Restaurants" component={Restaurants} />
+      <RestaurantStack.Screen name="RestaurantsList" component={Restaurants} />
       <RestaurantStack.Screen name="AddRestaurant" component={AddRestaurant} />
     </RestaurantStack.Navigator>
   );
