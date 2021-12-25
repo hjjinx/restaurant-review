@@ -1,9 +1,21 @@
 import { Entypo } from "@expo/vector-icons";
-import React from "react";
-import { FlatList, View, StyleSheet, TouchableOpacity } from "react-native";
+import React, { useEffect } from "react";
+import {
+  FlatList,
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
+import { useDispatch, useSelector } from "react-redux";
 import { AreaView } from "../../common/components";
 import Header from "../../common/components/Header";
 import palette from "../../common/palette";
+import {
+  getRestaurants,
+  selectIsFetchingRestaurantList,
+  selectRestaurantList,
+} from "../../redux/restaurants";
 import RestaurantCard from "./RestaurantCard";
 
 const mock = [
@@ -58,27 +70,40 @@ const mock = [
 ];
 
 const Restaurants = ({ navigation }: any) => {
+  const restaurantList = useSelector(selectRestaurantList);
+  const loading = useSelector(selectIsFetchingRestaurantList);
+  console.log({ restaurantList });
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(getRestaurants(0));
+  }, []);
   return (
     <AreaView noScroll>
       <Header heading={"Restaurants"} />
       <View style={styles.listContainer}>
-        <FlatList
-          data={mock}
-          renderItem={({ item }) => (
-            <View style={{ paddingBottom: 16 }}>
-              <RestaurantCard
-                name={item.name}
-                address={item.address}
-                rating={item.rating}
-                image={{
-                  uri: "https://b.zmtcdn.com/data/pictures/3/19027493/cf8ab1dab3454e89a05273322b78ec13_o2_featured_v2.jpg?output-format=webp",
-                }}
-              />
-            </View>
-          )}
-          keyExtractor={(item) => String(item.id)}
-          showsVerticalScrollIndicator={false}
-        />
+        {loading ? (
+          <View style={{ flex: 1, justifyContent: "center" }}>
+            <ActivityIndicator color={palette.primary} size="large" />
+          </View>
+        ) : (
+          <FlatList
+            data={restaurantList}
+            renderItem={({ item }) => (
+              <View style={{ paddingBottom: 16 }}>
+                <RestaurantCard
+                  name={item.name}
+                  address={item.address}
+                  rating={item.rating}
+                  image={{
+                    uri: item.imageUri,
+                  }}
+                />
+              </View>
+            )}
+            keyExtractor={(item) => String(item.id)}
+            showsVerticalScrollIndicator={false}
+          />
+        )}
       </View>
       <TouchableOpacity
         style={styles.fabButton}

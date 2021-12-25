@@ -14,6 +14,7 @@ import { setAlertMessage } from "../../../redux/common";
 import { ref, uploadBytes } from "firebase/storage";
 import { useNavigation } from "@react-navigation/native";
 import { convertFileUriToBlob } from "../../../common/utils";
+import { getRestaurants } from "../../../redux/restaurants";
 
 const formSchema = Yup.object().shape({
   name: Yup.string().required("Name is required!"),
@@ -38,6 +39,7 @@ const AddRestaurant = () => {
       const restaurantImageRef = ref(storage, `restaurantImages/${doc.id}`);
       await uploadBytes(restaurantImageRef, blob);
       dispatch(setAlertMessage("Success!"));
+      dispatch(getRestaurants(0));
       navigation.goBack();
     } catch (err) {
       console.log({ err });
