@@ -1,17 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import {
   AdminStackComponent,
   AuthenticationStackComponent,
 } from "./src/navigation";
-import { Provider } from "react-redux";
-import store from "./src/redux";
+import { Provider, useDispatch, useSelector } from "react-redux";
+import store, { persistor } from "./src/redux";
 import { OverlayLoader, Snackbar } from "./src/common/components";
 import { auth } from "./firebase";
 import { useFonts } from "expo-font";
+import { selectUser, setUser } from "./src/redux/user";
+import { PersistGate } from "redux-persist/integration/react";
 
-export default function App() {
-  const [user, setUser] = useState<any>();
+const App = () => {
+  const user = useSelector(selectUser);
+  const dispatch = useDispatch();
   let [fontsLoaded] = useFonts({
     MontserratBold: require("./assets/fonts/Montserrat/Montserrat-Black.ttf"),
     MontserratLight: require("./assets/fonts/Montserrat/Montserrat-Light.ttf"),
@@ -21,18 +24,21 @@ export default function App() {
   });
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) setUser(user);
-      else setUser(user);
+      if (!user?.uid) dispatch(setUser(null));
     });
     return unsubscribe;
   }, []);
   if (!fontsLoaded) return <OverlayLoader />;
-  return (
-    <Provider store={store}>
+  return !user ? <AuthenticationStackComponent /> : <AdminStackComponent />;
+};
+
+export default () => (
+  <Provider store={store}>
+    <PersistGate loading={null} persistor={persistor}>
       <NavigationContainer>
-        {!user ? <AuthenticationStackComponent /> : <AdminStackComponent />}
+        <App />
       </NavigationContainer>
       <Snackbar />
-    </Provider>
-  );
-}
+    </PersistGate>
+  </Provider>
+);

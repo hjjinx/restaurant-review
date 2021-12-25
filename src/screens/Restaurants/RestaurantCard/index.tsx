@@ -33,6 +33,7 @@ const RestaurantCard = (props: RestaurantCardProps) => {
                   : "star-o"
               }
               style={styles.star}
+              key={`star-icon-${i}`}
             />
           ))}
           <Text style={styles.rating}>{roundRating(rating, 10)}</Text>

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { View, Image } from "react-native";
 import styles from "../../common/styles";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../../firebase";
+import { auth, firestore } from "../../../firebase";
 import { errorHandler } from "../../common/utils";
 import { useDispatch } from "react-redux";
 import { setAlertMessage } from "../../redux/common";
@@ -12,6 +12,8 @@ import Input from "../../common/components/Input";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import palette from "../../common/palette";
+import { setUser } from "../../redux/user";
+import { doc, getDoc } from "firebase/firestore";
 
 const formSchema = Yup.object().shape({
   email: Yup.string()
@@ -29,7 +31,9 @@ const Login = ({ navigation }: any) => {
   const signIn = async ({ email, password }: any) => {
     try {
       setLoading(true);
-      await signInWithEmailAndPassword(auth, email, password);
+      const user = await signInWithEmailAndPassword(auth, email, password);
+      const userData = await getDoc(doc(firestore, `users/${user.user.uid}`));
+      dispatch(setUser(userData.data()));
       dispatch(setAlertMessage("Success!"));
       setLoading(false);
     } catch (err) {

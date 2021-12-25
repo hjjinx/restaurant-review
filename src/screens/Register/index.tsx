@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { View, Image } from "react-native";
 import { useDispatch } from "react-redux";
-import { auth } from "../../../firebase";
+import { auth, firestore } from "../../../firebase";
 import { errorHandler } from "../../common/utils";
 import { setAlertMessage } from "../../redux/common";
 import styles from "../../common/styles";
@@ -12,6 +12,8 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 import palette from "../../common/palette";
 import Input from "../../common/components/Input";
+import { doc, setDoc } from "firebase/firestore";
+import { setUser } from "../../redux/user";
 
 const formSchema = Yup.object().shape({
   email: Yup.string()
@@ -29,11 +31,16 @@ const Register = ({ navigation }: any) => {
   const signUp = async ({ name, email, password }: any) => {
     try {
       setLoading(true);
-      await createUserWithEmailAndPassword(auth, email, password);
+      const user = await createUserWithEmailAndPassword(auth, email, password);
       if (name)
         await updateProfile(auth.currentUser!, {
           displayName: name,
         });
+      await setDoc(doc(firestore, "users", user.user.uid), {
+        name,
+        isAdmin: false,
+      });
+      dispatch(setUser({ name, isAdmin: false }));
       dispatch(setAlertMessage("Success!"));
       setLoading(false);
     } catch (err) {

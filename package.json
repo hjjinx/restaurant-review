@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^12.0.5",
+    "@react-native-community/async-storage": "^1.12.1",
     "@react-navigation/bottom-tabs": "^6.0.9",
     "@react-navigation/native": "^6.0.6",
     "@react-navigation/native-stack": "^6.2.5",
@@ -32,6 +33,7 @@
     "react-native-snackbar-component": "^1.1.12",
     "react-native-web": "0.17.1",
     "react-redux": "^7.2.6",
+    "redux-persist": "^6.0.0",
     "yup": "^0.32.11"
   },
   "devDependencies": {
@@ -39,6 +41,7 @@
     "@types/firebase": "^3.2.1",
     "@types/react": "~17.0.21",
     "@types/react-native": "~0.64.12",
+    "@types/redux-persist": "^4.3.1",
     "typescript": "~4.3.5"
   },
   "private": true
