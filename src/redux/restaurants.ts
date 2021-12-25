@@ -64,12 +64,48 @@ export const getRestaurants =
 
 export const getRestaurant = async (restaurantId: string) => {
   try {
-    const docSnap = await getDoc(doc(firestore, `restaurants/${restaurantId}`));
+    const restaurantData = await getDoc(
+      doc(firestore, `restaurants/${restaurantId}`)
+    );
     const uri = await getDownloadURL(
       ref(storage, `restaurantImages/${restaurantId}`)
     );
-    if (docSnap.exists()) {
-      return { ...docSnap.data(), id: docSnap.id, imageUri: uri };
+    const highestRatedReviewSnapshot = await getDocs(
+      query(
+        collection(firestore, `restaurants/${restaurantId}/reviews`),
+        orderBy("rating", "desc"),
+        limit(1)
+      )
+    );
+    const highestRatedReview =
+      highestRatedReviewSnapshot?.docs?.[0]?.data() || {};
+
+    const lowestRatedReviewSnapshot = await getDocs(
+      query(
+        collection(firestore, `restaurants/${restaurantId}/reviews`),
+        orderBy("rating", "asc"),
+        limit(1)
+      )
+    );
+    const lowestRatedReview = lowestRatedReviewSnapshot?.docs?.[0]?.data();
+
+    const latestRatedReviewSnapshot = await getDocs(
+      query(
+        collection(firestore, `restaurants/${restaurantId}/reviews`),
+        orderBy("dateOfVisit", "desc"),
+        limit(1)
+      )
+    );
+    const latestRatedReview = latestRatedReviewSnapshot?.docs?.[0]?.data();
+    if (restaurantData.exists()) {
+      return {
+        ...restaurantData.data(),
+        id: restaurantData.id,
+        imageUri: uri,
+        highestRatedReview,
+        lowestRatedReview,
+        latestRatedReview,
+      };
     }
   } catch (err) {
     console.log({ err });

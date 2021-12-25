@@ -45,3 +45,10 @@ export const ratingColor = (rating: number) => {
       return "#ff4545";
   }
 };
+
+export const roundRating = (rating: number, base: number = 10) => {
+  const roundedRating = Math.round(rating * base) / base;
+  return String(roundedRating).includes(".")
+    ? String(roundedRating)
+    : String(roundedRating) + ".0";
+};

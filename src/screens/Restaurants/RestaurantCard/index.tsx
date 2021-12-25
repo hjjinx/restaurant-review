@@ -1,8 +1,9 @@
 import { FontAwesome } from "@expo/vector-icons";
-import React, { useMemo } from "react";
+import React from "react";
 import { View, StyleSheet, Text, Image } from "react-native";
 import Fonts from "../../../common/Fonts";
 import palette from "../../../common/palette";
+import { roundRating } from "../../../common/utils";
 
 type RestaurantCardProps = {
   name: string;
@@ -14,7 +15,6 @@ type RestaurantCardProps = {
 
 const RestaurantCard = (props: RestaurantCardProps) => {
   const { name, address, rating, numRatings, image } = props;
-  const stars = useMemo(() => Math.round(rating * 2) / 2, [rating]);
   return (
     <View style={styles.container}>
       <View style={styles.textContainer}>
@@ -26,16 +26,16 @@ const RestaurantCard = (props: RestaurantCardProps) => {
           {[1, 2, 3, 4, 5].map((i) => (
             <FontAwesome
               name={
-                stars - i === -0.5
+                Number(roundRating(rating, 2)) - i === -0.5
                   ? "star-half-o"
-                  : stars >= i
+                  : Number(roundRating(rating, 2)) >= i
                   ? "star"
                   : "star-o"
               }
               style={styles.star}
             />
           ))}
-          <Text style={styles.rating}>{rating}</Text>
+          <Text style={styles.rating}>{roundRating(rating, 10)}</Text>
           <Text style={styles.numRatings}> ({numRatings})</Text>
         </View>
       </View>
