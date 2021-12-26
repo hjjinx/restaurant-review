@@ -1,4 +1,4 @@
-import { AntDesign, FontAwesome } from "@expo/vector-icons";
+import { AntDesign, FontAwesome, FontAwesome5 } from "@expo/vector-icons";
 import React, { useEffect, useMemo, useState } from "react";
 import {
   ImageBackground,
@@ -16,7 +16,12 @@ import Fonts from "../../common/Fonts";
 import palette from "../../common/palette";
 import { roundRating } from "../../common/utils";
 import { setAlertMessage } from "../../redux/common";
-import { deleteReview, getRestaurant } from "../../redux/restaurants";
+import {
+  deleteReview,
+  getRestaurant,
+  selectIsFetchingSelectedRestaurant,
+  selectSelectedRestaurant,
+} from "../../redux/restaurants";
 import { selectUser } from "../../redux/user";
 import ReviewCard from "./ReviewCard";
 
@@ -24,16 +29,16 @@ const RestaurantDetail = ({ navigation, route }: any) => {
   const restaurantId = route?.params?.restaurantId;
   const dispatch = useDispatch();
   const user = useSelector(selectUser);
+  const restaurant = useSelector(selectSelectedRestaurant);
+  const fetchingRestaurant = useSelector(selectIsFetchingSelectedRestaurant);
   const [loading, setLoading] = useState(false);
-  const [restaurant, setRestaurant] = useState<any>();
+  const [userRating, setUserRating] = useState(0);
   const _getRestaurant = async (restaurantId: string) => {
     try {
-      setLoading(true);
-      const data = await getRestaurant(restaurantId, user);
-      setRestaurant(data);
+      dispatch(getRestaurant(restaurantId, user));
       setLoading(false);
     } catch (err) {
-      setLoading(false);
+      console.log({ err });
     }
   };
   useEffect(() => {
@@ -83,7 +88,7 @@ const RestaurantDetail = ({ navigation, route }: any) => {
 
   return (
     <SafeAreaView style={styles.areaView}>
-      {loading ? (
+      {loading || fetchingRestaurant ? (
         <OverlayLoader
           color={palette.primary}
           containerStyle={{ backgroundColor: palette.white }}
@@ -137,6 +142,42 @@ const RestaurantDetail = ({ navigation, route }: any) => {
                   </Text>
                 </View>
               </View>
+              {!restaurant?.loggedInUserReview && (
+                <View style={styles.reviewSummaryContainer}>
+                  <Text style={styles.reviewSummaryText}>
+                    {"Add a review!"}
+                  </Text>
+                  <Text style={styles.ratingCategoryText}>
+                    Adding a review helps other people
+                  </Text>
+                  <View style={styles.userReviewContainer}>
+                    <AntDesign
+                      name="addusergroup"
+                      color={palette.primary}
+                      style={{ fontSize: 25, marginRight: 20 }}
+                    />
+                    {[1, 2, 3, 4, 5].map((i) => (
+                      <TouchableOpacity
+                        key={`star-rating-${i}`}
+                        onPress={() => {
+                          setUserRating(i);
+                          setTimeout(() => {
+                            navigation.navigate("AddReview", {
+                              restaurant,
+                              userRating: i,
+                            });
+                          }, 200);
+                        }}
+                      >
+                        <FontAwesome
+                          name={userRating >= i ? "star" : "star-o"}
+                          style={[styles.star, { fontSize: 30 }]}
+                        />
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                </View>
+              )}
               {reviewListMap.map((i, index) => (
                 <View
                   style={styles.reviewSummaryContainer}
@@ -249,5 +290,10 @@ const styles = StyleSheet.create({
     marginRight: 3,
     color: palette.primary,
     fontSize: 20,
+  },
+  userReviewContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 5,
   },
 });

@@ -6,6 +6,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   ActivityIndicator,
+  RefreshControl,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { AreaView } from "../../common/components";
@@ -60,6 +61,12 @@ const Restaurants = ({ navigation }: any) => {
             )}
             keyExtractor={(item) => String(item.id)}
             showsVerticalScrollIndicator={false}
+            refreshControl={
+              <RefreshControl
+                refreshing={loading}
+                onRefresh={() => dispatch(getRestaurants(0))}
+              />
+            }
           />
         )}
       </View>

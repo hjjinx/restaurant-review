@@ -8,6 +8,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import AddRestaurant from "../screens/Restaurants/AddRestaurant";
 import RestaurantDetail from "../screens/Restaurant";
 import Users from "../screens/Users";
+import AddReview from "../screens/Restaurant/AddReview";
 
 const AdminTabs = createBottomTabNavigator();
 
@@ -75,6 +76,7 @@ const RestaurantStackComponent = () => {
         name="RestaurantDetail"
         component={RestaurantDetail}
       />
+      <RestaurantStack.Screen name="AddReview" component={AddReview} />
     </RestaurantStack.Navigator>
   );
 };

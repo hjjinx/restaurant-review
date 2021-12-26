@@ -5,6 +5,8 @@ import {
   TextInputProps,
   View,
   Text,
+  StyleProp,
+  TextStyle,
 } from "react-native";
 import Fonts from "../../Fonts";
 import palette from "../../palette";
@@ -12,6 +14,7 @@ import palette from "../../palette";
 interface ITextArea {
   placeholder?: string;
   label?: string;
+  labelStyle?: StyleProp<TextStyle>;
   height?: number;
   error?: string | false | undefined;
 }
@@ -19,13 +22,14 @@ interface ITextArea {
 const TextArea = ({
   placeholder,
   label,
+  labelStyle,
   height,
   error,
   ...rest
 }: ITextArea & TextInputProps) => {
   return (
     <>
-      <Text style={styles.label}>{label}</Text>
+      <Text style={[styles.label, labelStyle]}>{label}</Text>
       <View
         style={[
           styles.main,

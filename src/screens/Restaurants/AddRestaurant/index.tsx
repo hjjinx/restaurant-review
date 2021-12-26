@@ -35,7 +35,11 @@ const AddRestaurant = () => {
       const blob = await convertFileUriToBlob(uploadUri);
       delete values.image;
 
-      const doc = await addDoc(collection(firestore, "restaurants"), values);
+      const doc = await addDoc(collection(firestore, "restaurants"), {
+        ...values,
+        avgRating: 0,
+        numRatings: 0,
+      });
       const restaurantImageRef = ref(storage, `restaurantImages/${doc.id}`);
       await uploadBytes(restaurantImageRef, blob);
       dispatch(setAlertMessage("Success!"));

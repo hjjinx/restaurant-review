@@ -22,23 +22,29 @@ const RestaurantCard = (props: RestaurantCardProps) => {
         <Text style={styles.darkGrayRegular12} numberOfLines={2}>
           {address}
         </Text>
-        <View style={styles.ratingContainer}>
-          {[1, 2, 3, 4, 5].map((i) => (
-            <FontAwesome
-              name={
-                Number(roundRating(rating, 2)) - i === -0.5
-                  ? "star-half-o"
-                  : Number(roundRating(rating, 2)) >= i
-                  ? "star"
-                  : "star-o"
-              }
-              style={styles.star}
-              key={`star-icon-${i}`}
-            />
-          ))}
-          <Text style={styles.rating}>{roundRating(rating, 10)}</Text>
-          <Text style={styles.numRatings}> ({numRatings})</Text>
-        </View>
+        {numRatings == 0 ? (
+          <View style={styles.ratingContainer}>
+            <Text style={styles.rating}>No reviews yet!</Text>
+          </View>
+        ) : (
+          <View style={styles.ratingContainer}>
+            {[1, 2, 3, 4, 5].map((i) => (
+              <FontAwesome
+                name={
+                  Number(roundRating(rating, 2)) - i === -0.5
+                    ? "star-half-o"
+                    : Number(roundRating(rating, 2)) >= i
+                    ? "star"
+                    : "star-o"
+                }
+                style={styles.star}
+                key={`star-icon-${i}`}
+              />
+            ))}
+            <Text style={styles.rating}>{roundRating(rating, 10)}</Text>
+            <Text style={styles.numRatings}> ({numRatings})</Text>
+          </View>
+        )}
       </View>
       <Image source={image} style={styles.image} resizeMode="stretch" />
     </View>
