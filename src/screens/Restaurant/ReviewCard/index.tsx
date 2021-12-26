@@ -1,9 +1,9 @@
 import React from "react";
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import moment from "moment";
 import Fonts from "../../../common/Fonts";
 import palette from "../../../common/palette";
-import { FontAwesome5 } from "@expo/vector-icons";
+import { AntDesign, FontAwesome5 } from "@expo/vector-icons";
 import { ratingColor } from "../../../common/utils";
 
 type ReviewCardProps = {
@@ -11,9 +11,22 @@ type ReviewCardProps = {
   date: Date | string;
   rating: string;
   comment: string;
+  editable?: boolean;
+  onPressEdit?: () => void;
+  deletable?: boolean;
+  onPressDelete?: () => void;
 };
 
-const ReviewCard = ({ userName, date, rating, comment }: ReviewCardProps) => {
+const ReviewCard = ({
+  userName,
+  date,
+  rating,
+  comment,
+  editable,
+  onPressEdit,
+  deletable,
+  onPressDelete,
+}: ReviewCardProps) => {
   return (
     <View style={styles.container}>
       <View style={styles.topRow}>
@@ -22,18 +35,31 @@ const ReviewCard = ({ userName, date, rating, comment }: ReviewCardProps) => {
         </View>
         <View style={styles.topRight}>
           <Text style={styles.userNameText}>{userName}</Text>
-          <View
-            style={[
-              styles.ratingBox,
-              { backgroundColor: ratingColor(Number(rating)) },
-            ]}
-          >
-            <Text style={styles.ratingText}>{rating}</Text>
-          </View>
+
+          {editable && (
+            <TouchableOpacity style={styles.editIcon} onPress={onPressEdit}>
+              <AntDesign name="edit" color={palette.white} size={15} />
+            </TouchableOpacity>
+          )}
+          {deletable && (
+            <TouchableOpacity
+              style={[styles.editIcon, { backgroundColor: palette.dangerRed }]}
+              onPress={onPressDelete}
+            >
+              <AntDesign name="delete" color={palette.white} size={15} />
+            </TouchableOpacity>
+          )}
         </View>
       </View>
       <View style={styles.commentView}>
-        <Text style={styles.commentText}>{comment}</Text>
+        <Text
+          style={[
+            styles.commentText,
+            !comment && { color: palette.placeholder },
+          ]}
+        >
+          {comment || "The user didn't leave a comment"}
+        </Text>
       </View>
       <View style={styles.dateContainer}>
         <View style={styles.datetimeView}>
@@ -42,6 +68,14 @@ const ReviewCard = ({ userName, date, rating, comment }: ReviewCardProps) => {
           >
             {moment(date).format("LL")}
           </Text>
+        </View>
+        <View
+          style={[
+            styles.ratingBox,
+            { backgroundColor: ratingColor(Number(rating)) },
+          ]}
+        >
+          <Text style={styles.ratingText}>{rating}</Text>
         </View>
       </View>
     </View>
@@ -94,7 +128,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     width: "100%",
     justifyContent: "space-between",
-    marginBottom: 20,
+    marginTop: 5,
+    marginBottom: 15,
   },
   iconContainer: {
     width: 30,
@@ -132,5 +167,14 @@ const styles = StyleSheet.create({
     color: palette.white,
     fontSize: 12,
     fontFamily: Fonts.MontserratRegular,
+  },
+  editIcon: {
+    width: 25,
+    height: 25,
+    backgroundColor: palette.primary,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 15,
+    marginLeft: 5,
   },
 });

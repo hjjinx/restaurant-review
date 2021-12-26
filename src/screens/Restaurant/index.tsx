@@ -1,5 +1,5 @@
 import { AntDesign, FontAwesome } from "@expo/vector-icons";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   ImageBackground,
   SafeAreaView,
@@ -8,17 +8,21 @@ import {
   View,
   Text,
   ScrollView,
+  Alert,
 } from "react-native";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { OverlayLoader } from "../../common/components";
 import Fonts from "../../common/Fonts";
 import palette from "../../common/palette";
 import { roundRating } from "../../common/utils";
-import { getRestaurant } from "../../redux/restaurants";
+import { setAlertMessage } from "../../redux/common";
+import { deleteReview, getRestaurant } from "../../redux/restaurants";
 import { selectUser } from "../../redux/user";
 import ReviewCard from "./ReviewCard";
 
 const RestaurantDetail = ({ navigation, route }: any) => {
+  const restaurantId = route?.params?.restaurantId;
+  const dispatch = useDispatch();
   const user = useSelector(selectUser);
   const [loading, setLoading] = useState(false);
   const [restaurant, setRestaurant] = useState<any>();
@@ -33,14 +37,50 @@ const RestaurantDetail = ({ navigation, route }: any) => {
     }
   };
   useEffect(() => {
-    const restaurantId = route?.params?.restaurantId;
     _getRestaurant(restaurantId);
   }, []);
-  const highestRatedReview = restaurant?.highestRatedReview;
-  const lowestRatedReview = restaurant?.lowestRatedReview;
-  const latestRatedReview = restaurant?.latestRatedReview;
-  const loggedInUserReview = restaurant?.loggedInUserReview;
-  console.log({ loggedInUserReview });
+
+  const reviewListMap = useMemo(() => {
+    const arr = [];
+    if (restaurant?.loggedInUserReview)
+      arr.push({
+        title: "Your Review",
+        data: restaurant?.loggedInUserReview,
+      });
+    if (restaurant?.highestRatedReview)
+      arr.push({
+        title: "Highest Rated Review",
+        data: restaurant?.highestRatedReview,
+      });
+    if (restaurant?.lowestRatedReview)
+      arr.push({
+        title: "Lowest Rated Review",
+        data: restaurant?.lowestRatedReview,
+      });
+    if (restaurant?.latestRatedReview)
+      arr.push({
+        title: "Latest Review",
+        data: restaurant?.latestRatedReview,
+      });
+    return arr;
+  }, [restaurant]);
+
+  const onDeleteReview = (review: any) => {
+    Alert.alert("Delete", "Are you sure you want to delete this review?", [
+      {
+        text: "Yes",
+        onPress: () => {
+          setLoading(true);
+          deleteReview(restaurant, review, () => {
+            dispatch(setAlertMessage("Review Deleted Successfully!"));
+            _getRestaurant(restaurantId);
+          });
+        },
+      },
+      { text: "Cancel", onPress: () => {} },
+    ]);
+  };
+
   return (
     <SafeAreaView style={styles.areaView}>
       {loading ? (
@@ -97,50 +137,29 @@ const RestaurantDetail = ({ navigation, route }: any) => {
                   </Text>
                 </View>
               </View>
-              {!!highestRatedReview?.rating && (
-                <View style={styles.reviewSummaryContainer}>
-                  <Text style={styles.reviewSummaryText}>
-                    Highest Rated Review
-                  </Text>
+              {reviewListMap.map((i, index) => (
+                <View
+                  style={styles.reviewSummaryContainer}
+                  key={`review-${index}`}
+                >
+                  <Text style={styles.reviewSummaryText}>{i.title}</Text>
                   <ReviewCard
-                    userName={highestRatedReview?.createdBy}
-                    date={
-                      new Date(highestRatedReview?.dateOfVisit?.seconds * 1000)
+                    userName={
+                      user?.uid == i.data?.createdBy?.uid
+                        ? "You"
+                        : i.data?.createdBy?.name
                     }
-                    rating={roundRating(highestRatedReview?.rating)}
-                    comment={highestRatedReview?.comment}
+                    date={new Date(i.data?.dateOfVisit?.seconds * 1000)}
+                    rating={roundRating(i.data?.rating)}
+                    comment={i.data?.comment}
+                    editable={user?.uid == i.data?.createdBy?.uid}
+                    deletable={
+                      user?.isAdmin || user?.uid == i.data?.createdBy?.uid
+                    }
+                    onPressDelete={() => onDeleteReview(i.data)}
                   />
                 </View>
-              )}
-
-              {!!lowestRatedReview?.rating && (
-                <View style={styles.reviewSummaryContainer}>
-                  <Text style={styles.reviewSummaryText}>
-                    Lowest Rated Review
-                  </Text>
-                  <ReviewCard
-                    userName={lowestRatedReview?.createdBy}
-                    date={
-                      new Date(lowestRatedReview?.dateOfVisit?.seconds * 1000)
-                    }
-                    rating={roundRating(lowestRatedReview?.rating)}
-                    comment={lowestRatedReview?.comment}
-                  />
-                </View>
-              )}
-              {!!latestRatedReview?.rating && (
-                <View style={styles.reviewSummaryContainer}>
-                  <Text style={styles.reviewSummaryText}>Latest Review</Text>
-                  <ReviewCard
-                    userName={latestRatedReview?.createdBy}
-                    date={
-                      new Date(latestRatedReview?.dateOfVisit?.seconds * 1000)
-                    }
-                    rating={roundRating(latestRatedReview?.rating)}
-                    comment={latestRatedReview?.comment}
-                  />
-                </View>
-              )}
+              ))}
             </View>
           </ScrollView>
         </>

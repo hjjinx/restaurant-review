@@ -8,9 +8,13 @@ import {
   orderBy,
   limit,
   where,
+  deleteDoc,
+  runTransaction,
+  updateDoc,
 } from "firebase/firestore";
 import { firestore, storage } from "../../firebase";
 import { getDownloadURL, ref } from "firebase/storage";
+import { roundRating } from "../common/utils";
 
 const restaurantsSlice = createSlice({
   name: "restaurants",
@@ -92,7 +96,8 @@ export const getRestaurant = async (restaurantId: string, user: any) => {
           const user = await getDoc(
             doc(firestore, `users/${highestRatedReview.createdBy}`)
           );
-          highestRatedReview.createdBy = user?.data()?.name;
+          highestRatedReview.createdBy = { ...user?.data(), uid: user.id };
+          highestRatedReview.id = highestRatedReviewSnapshot?.docs?.[0]?.id;
         }
         resolve(highestRatedReview);
       }),
@@ -111,7 +116,8 @@ export const getRestaurant = async (restaurantId: string, user: any) => {
           const user = await getDoc(
             doc(firestore, `users/${lowestRatedReview.createdBy}`)
           );
-          lowestRatedReview.createdBy = user?.data()?.name;
+          lowestRatedReview.createdBy = { ...user?.data(), uid: user.id };
+          lowestRatedReview.id = lowestRatedReviewSnapshot?.docs?.[0]?.id;
         }
         resolve(lowestRatedReview);
       }),
@@ -130,7 +136,8 @@ export const getRestaurant = async (restaurantId: string, user: any) => {
           const user = await getDoc(
             doc(firestore, `users/${latestRatedReview.createdBy}`)
           );
-          latestRatedReview.createdBy = user?.data()?.name;
+          latestRatedReview.createdBy = { ...user?.data(), uid: user.id };
+          latestRatedReview.id = latestRatedReviewSnapshot?.docs?.[0]?.id;
         }
         resolve(latestRatedReview);
       }),
@@ -146,8 +153,8 @@ export const getRestaurant = async (restaurantId: string, user: any) => {
           if (!loggedInUserReviewSnapshot.empty) {
             loggedInUserReview =
               loggedInUserReviewSnapshot?.docs?.[0]?.data() || {};
-            loggedInUserReview.createdBy = user.name;
-            console.log({ loggedInUserReview });
+            loggedInUserReview.createdBy = user;
+            loggedInUserReview.id = loggedInUserReviewSnapshot?.docs?.[0]?.id;
           }
           resolve(loggedInUserReview);
         }
@@ -169,6 +176,59 @@ export const getRestaurant = async (restaurantId: string, user: any) => {
     console.log({ err });
   }
 };
+
+export const deleteReview = async (
+  restaurant: any,
+  review: any,
+  afterDelete: (restaurantId: string) => void
+) => {
+  try {
+    const restaurantId = restaurant?.id;
+    await deleteDoc(
+      doc(firestore, `restaurants/${restaurantId}/reviews/${review.id}`)
+    );
+    await updateDoc(doc(firestore, `restaurants/${restaurantId}`), {
+      numRatings: restaurant.numRatings - 1,
+      avgRating: roundRating(
+        (restaurant?.avgRating * restaurant.numRatings - review.rating) /
+          (restaurant.numRatings - 1)
+      ),
+    });
+    afterDelete(restaurantId);
+  } catch (err) {
+    console.log({ err });
+  }
+};
+
+// function addRating(restaurantId: string, review: any) {
+//   const restaurantRef = doc(firestore, `restaurants/${restaurantId}`);
+//   const ratingRef = doc(
+//     collection(firestore, `restaurants/${restaurantId}/reviews`)
+//   );
+
+//   // In a transaction, add the new rating and update the aggregate totals
+//   return runTransaction(firestore, async (transaction) => {
+//     return transaction.get(restaurantRef).then((res) => {
+//       if (!res.exists) {
+//         throw "Document does not exist!";
+//       }
+
+//       // Compute new number of ratings
+//       var newNumRatings = res.data().numRatings + 1;
+
+//       // Compute new average rating
+//       var oldRatingTotal = res.data().avgRating * res.data().numRatings;
+//       var newAvgRating = (oldRatingTotal + review.rating) / newNumRatings;
+
+//       // Commit to Firestore
+//       transaction.update(restaurantRef, {
+//         numRatings: newNumRatings,
+//         avgRating: newAvgRating,
+//       });
+//       transaction.set(ratingRef, review);
+//     });
+//   });
+// }
 
 export const selectRestaurantList = (state: any) =>
   state.restaurants?.restaurantList;
