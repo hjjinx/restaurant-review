@@ -8,7 +8,11 @@ import TextArea from "../../../common/components/TextArea";
 import Fonts from "../../../common/Fonts";
 import palette from "../../../common/palette";
 import { setAlertMessage } from "../../../redux/common";
-import { addReview, getRestaurant } from "../../../redux/restaurants";
+import {
+  addReview,
+  getRestaurant,
+  updateReview,
+} from "../../../redux/restaurants";
 import { selectUser } from "../../../redux/user";
 
 const iconName = (rating: number) => {
@@ -28,22 +32,40 @@ const iconName = (rating: number) => {
 
 const AddReview = ({ navigation, route }: any) => {
   const user = useSelector(selectUser);
-  const { restaurant, userRating } = route?.params || {};
+  const {
+    restaurant,
+    userRating: previousRating,
+    comment: previousComment,
+    id,
+  } = route?.params || {};
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
-  const [rating, setRating] = useState(userRating);
-  const [comment, setComment] = useState("");
-  const _addReview = async () => {
+  const [rating, setRating] = useState(previousRating);
+  const [comment, setComment] = useState(previousComment || "");
+  const submit = async () => {
     try {
       setLoading(true);
-      await addReview(restaurant?.id, {
-        comment,
-        createdBy: user?.uid,
-        dateOfVisit: new Date(),
-        rating,
-      });
+      if (id) {
+        await updateReview(
+          restaurant?.id,
+          {
+            comment,
+            rating,
+            id,
+          },
+          previousRating
+        );
+      } else
+        await addReview(restaurant?.id, {
+          comment,
+          createdBy: user?.uid,
+          dateOfVisit: new Date(),
+          rating,
+        });
       dispatch(getRestaurant(restaurant?.id, user));
-      dispatch(setAlertMessage("Successfully added the review!"));
+      dispatch(
+        setAlertMessage(`Successfully ${id ? "updated" : "added"} the review!`)
+      );
       setLoading(false);
     } catch (err) {
       console.log({ err });
@@ -92,7 +114,7 @@ const AddReview = ({ navigation, route }: any) => {
         </View>
         <Button
           text={"Submit"}
-          onPress={_addReview}
+          onPress={submit}
           style={{ marginTop: 30 }}
           loading={loading}
           disabled={loading}

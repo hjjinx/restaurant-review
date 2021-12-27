@@ -86,6 +86,15 @@ const RestaurantDetail = ({ navigation, route }: any) => {
     ]);
   };
 
+  const onEditReview = (review: any) => {
+    navigation.navigate("AddReview", {
+      restaurant,
+      userRating: review.rating,
+      comment: review.comment,
+      id: review.id,
+    });
+  };
+
   return (
     <SafeAreaView style={styles.areaView}>
       {loading || fetchingRestaurant ? (
@@ -198,6 +207,7 @@ const RestaurantDetail = ({ navigation, route }: any) => {
                       user?.isAdmin || user?.uid == i.data?.createdBy?.uid
                     }
                     onPressDelete={() => onDeleteReview(i.data)}
+                    onPressEdit={() => onEditReview(i.data)}
                   />
                 </View>
               ))}

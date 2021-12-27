@@ -226,7 +226,7 @@ export const deleteReview = async (
 
 export const addReview = async (restaurantId: string, review: any) => {
   const restaurantRef = doc(firestore, `restaurants/${restaurantId}`);
-  const ratingRef = doc(
+  const reviewRef = doc(
     collection(firestore, `restaurants/${restaurantId}/reviews`)
   );
 
@@ -244,7 +244,38 @@ export const addReview = async (restaurantId: string, review: any) => {
         numRatings: newNumRatings,
         avgRating: newAvgRating,
       });
-      transaction.set(ratingRef, review);
+      transaction.set(reviewRef, review);
+    });
+  });
+};
+
+export const updateReview = async (
+  restaurantId: string,
+  review: any,
+  previousRating: number
+) => {
+  const restaurantRef = doc(firestore, `restaurants/${restaurantId}`);
+  const reviewRef = doc(
+    firestore,
+    `restaurants/${restaurantId}/reviews/${review.id}`
+  );
+
+  return runTransaction(firestore, async (transaction) => {
+    return transaction.get(restaurantRef).then((res) => {
+      if (!res.exists) {
+        throw "Document does not exist!";
+      }
+
+      var oldRatingTotal = res.data()!.avgRating * res.data()!.numRatings;
+      var newAvgRating =
+        (oldRatingTotal + review.rating - previousRating) /
+        res.data()!.numRatings;
+
+      transaction.update(restaurantRef, {
+        avgRating: newAvgRating,
+      });
+      delete review.id;
+      transaction.update(reviewRef, review);
     });
   });
 };

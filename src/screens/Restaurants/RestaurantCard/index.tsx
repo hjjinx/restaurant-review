@@ -24,7 +24,7 @@ const RestaurantCard = (props: RestaurantCardProps) => {
         </Text>
         {numRatings == 0 ? (
           <View style={styles.ratingContainer}>
-            <Text style={styles.rating}>No reviews yet!</Text>
+            <Text style={styles.numRatings}>No reviews yet!</Text>
           </View>
         ) : (
           <View style={styles.ratingContainer}>
