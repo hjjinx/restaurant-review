@@ -106,7 +106,7 @@ const RestaurantDetail = ({ navigation, route }: any) => {
         />
       ) : (
         <>
-          <ScrollView>
+          <ScrollView showsVerticalScrollIndicator={false}>
             <ImageBackground
               style={{ width: "100%", height: 260 }}
               resizeMode="cover"
