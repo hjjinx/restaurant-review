@@ -7,7 +7,7 @@ import Restaurants from "../screens/Restaurants";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import AddRestaurant from "../screens/Restaurants/AddRestaurant";
 import RestaurantDetail from "../screens/Restaurant";
-import Users from "../screens/Users";
+import Profile from "../screens/Profile";
 import AddReview from "../screens/Restaurant/AddReview";
 
 const AdminTabs = createBottomTabNavigator();
@@ -27,7 +27,7 @@ const renderTabBarIcon = (
           color={color}
         />
       );
-    case "Users":
+    case "Profile":
       return (
         <FontAwesome
           name={focused ? "user-circle" : "user-circle-o"}
@@ -57,7 +57,7 @@ function AdminStackComponent() {
         name="Restaurants"
         component={RestaurantStackComponent}
       />
-      <AdminTabs.Screen name="Users" component={Users} />
+      <AdminTabs.Screen name="Profile" component={Profile} />
     </AdminTabs.Navigator>
   );
 }
