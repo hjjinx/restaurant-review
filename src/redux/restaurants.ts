@@ -236,7 +236,7 @@ export const addReview = async (restaurantId: string, review: any) => {
         throw "Document does not exist!";
       }
 
-      var newNumRatings = res.data()!.numRatings + 1;
+      var newNumRatings = Number(res.data()!.numRatings) + 1;
       var oldRatingTotal = res.data()!.avgRating * res.data()!.numRatings;
       var newAvgRating = (oldRatingTotal + review.rating) / newNumRatings;
 
