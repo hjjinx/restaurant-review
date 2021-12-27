@@ -1,12 +1,16 @@
 import React, { useState } from "react";
-import { AreaView, Button, ImageUploadBox } from "../../../common/components";
-import Header from "../../../common/components/Header";
+import {
+  AreaView,
+  Button,
+  ImageUploadBox,
+  Header,
+  TextArea,
+  Input,
+} from "../../../common/components";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { View, StyleSheet, Platform } from "react-native";
-import Input from "../../../common/components/Input";
 import palette from "../../../common/palette";
-import TextArea from "../../../common/components/TextArea";
 import { firestore, storage } from "../../../../firebase";
 import { addDoc, collection } from "firebase/firestore";
 import { useDispatch } from "react-redux";

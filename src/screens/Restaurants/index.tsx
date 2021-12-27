@@ -9,8 +9,7 @@ import {
   RefreshControl,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { AreaView } from "../../common/components";
-import Header from "../../common/components/Header";
+import { AreaView, Header } from "../../common/components";
 import palette from "../../common/palette";
 import {
   getRestaurants,
