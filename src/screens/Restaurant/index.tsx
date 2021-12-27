@@ -19,6 +19,7 @@ import { setAlertMessage } from "../../redux/common";
 import {
   deleteReview,
   getRestaurant,
+  getRestaurants,
   selectIsFetchingSelectedRestaurant,
   selectSelectedRestaurant,
 } from "../../redux/restaurants";
@@ -79,6 +80,7 @@ const RestaurantDetail = ({ navigation, route }: any) => {
           deleteReview(restaurant, review, () => {
             dispatch(setAlertMessage("Review Deleted Successfully!"));
             _getRestaurant(restaurantId);
+            dispatch(getRestaurants(0));
           });
         },
       },

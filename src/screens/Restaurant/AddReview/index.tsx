@@ -11,6 +11,7 @@ import { setAlertMessage } from "../../../redux/common";
 import {
   addReview,
   getRestaurant,
+  getRestaurants,
   updateReview,
 } from "../../../redux/restaurants";
 import { selectUser } from "../../../redux/user";
@@ -62,6 +63,7 @@ const AddReview = ({ navigation, route }: any) => {
           dateOfVisit: new Date(),
           rating,
         });
+      dispatch(getRestaurants(0));
       dispatch(getRestaurant(restaurant?.id, user));
       dispatch(
         setAlertMessage(`Successfully ${id ? "updated" : "added"} the review!`)
