@@ -66,6 +66,7 @@ export const getRestaurants =
       const q = query(
         collection(firestore, "restaurants"),
         orderBy("avgRating", "desc"),
+        orderBy("numRatings", "desc"),
         limit(count)
       );
       const querySnapshot = await getDocs(q);
