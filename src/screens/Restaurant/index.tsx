@@ -80,7 +80,7 @@ const RestaurantDetail = ({ navigation, route }: any) => {
           deleteReview(restaurant, review, () => {
             dispatch(setAlertMessage("Review Deleted Successfully!"));
             _getRestaurant(restaurantId);
-            dispatch(getRestaurants(0));
+            dispatch(getRestaurants(false));
           });
         },
       },

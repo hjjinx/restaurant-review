@@ -13,7 +13,10 @@ import { AreaView, Header } from "../../common/components";
 import palette from "../../common/palette";
 import {
   getRestaurants,
+  selectIsFetchingMoreRestaurants,
   selectIsFetchingRestaurantList,
+  selectIsRestaurantListEndReached,
+  selectLastRestaurantSnapshot,
   selectRestaurantList,
 } from "../../redux/restaurants";
 import { selectUser } from "../../redux/user";
@@ -22,10 +25,13 @@ import RestaurantCard from "./RestaurantCard";
 const Restaurants = ({ navigation }: any) => {
   const user = useSelector(selectUser);
   const restaurantList = useSelector(selectRestaurantList);
+  const lastRestaurantSnapshot = useSelector(selectLastRestaurantSnapshot);
   const loading = useSelector(selectIsFetchingRestaurantList);
+  const isFetchingMore = useSelector(selectIsFetchingMoreRestaurants);
+  const isEndReached = useSelector(selectIsRestaurantListEndReached);
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(getRestaurants(0));
+    dispatch(getRestaurants(false));
   }, []);
   return (
     <AreaView noScroll>
@@ -63,8 +69,20 @@ const Restaurants = ({ navigation }: any) => {
             refreshControl={
               <RefreshControl
                 refreshing={loading}
-                onRefresh={() => dispatch(getRestaurants(0))}
+                onRefresh={() => dispatch(getRestaurants(false))}
               />
+            }
+            onEndReached={() =>
+              !isFetchingMore &&
+              !isEndReached &&
+              dispatch(getRestaurants(lastRestaurantSnapshot))
+            }
+            ListFooterComponent={
+              isFetchingMore && (
+                <View style={{ padding: 10 }}>
+                  <ActivityIndicator color={palette.primary} size="small" />
+                </View>
+              )
             }
           />
         )}

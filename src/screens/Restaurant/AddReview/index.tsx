@@ -61,7 +61,7 @@ const AddReview = ({ navigation, route }: any) => {
           dateOfVisit: new Date(),
           rating,
         });
-      dispatch(getRestaurants(0));
+      dispatch(getRestaurants(false));
       dispatch(getRestaurant(restaurant?.id, user));
       dispatch(
         setAlertMessage(`Successfully ${id ? "updated" : "added"} the review!`)

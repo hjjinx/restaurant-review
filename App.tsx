@@ -13,7 +13,12 @@ import { selectUser, setUser } from "./src/redux/user";
 import { PersistGate } from "redux-persist/integration/react";
 import { LogBox } from "react-native";
 
-LogBox.ignoreLogs(["Setting a timer"]);
+LogBox.ignoreLogs([
+  "Setting a timer",
+  "non-serializable value",
+  "AsyncStorage has been extracted",
+  "SerializableStateInvariantMiddleware",
+]);
 
 const App = () => {
   const user = useSelector(selectUser);

@@ -11,6 +11,7 @@ import {
   deleteDoc,
   runTransaction,
   updateDoc,
+  startAfter,
 } from "firebase/firestore";
 import { firestore, storage } from "../../firebase";
 import { getDownloadURL, ref } from "firebase/storage";
@@ -23,17 +24,32 @@ const restaurantsSlice = createSlice({
     fetchingRestaurantList: false,
     fetchingSelectedRestaurant: false,
     selectedRestaurant: {},
+    lastRestaurantSnapshot: null,
+    isFetchingMoreRestaurants: false,
+    restaurantListEndReached: false,
   },
   reducers: {
-    setRestaurantListRequest: (state) => {
-      state.fetchingRestaurantList = true;
+    setRestaurantListRequest: (state, action) => {
+      if (action.payload.isFetchingMore) state.isFetchingMoreRestaurants = true;
+      else state.fetchingRestaurantList = true;
     },
     setRestaurantListSuccess: (state, action) => {
-      state.restaurantList = action.payload;
+      state.lastRestaurantSnapshot = action.payload.lastRestaurantSnapshot;
+      state.isFetchingMoreRestaurants = false;
       state.fetchingRestaurantList = false;
+      state.restaurantListEndReached = false;
+      if (action.payload.isFetchingMore) {
+        state.restaurantList = [
+          ...state.restaurantList,
+          ...action.payload.data,
+        ] as any;
+      } else {
+        state.restaurantList = action.payload.data;
+      }
     },
     setRestaurantListError: (state) => {
       state.fetchingRestaurantList = false;
+      state.isFetchingMoreRestaurants = false;
     },
 
     setSelectedRestaurantRequest: (state) => {
@@ -46,6 +62,12 @@ const restaurantsSlice = createSlice({
     setSelectedRestaurantError: (state) => {
       state.fetchingSelectedRestaurant = false;
     },
+
+    setRestaurantListEndReached: (state, action) => {
+      state.restaurantListEndReached = action.payload;
+      state.fetchingRestaurantList = false;
+      state.isFetchingMoreRestaurants = false;
+    },
   },
 });
 
@@ -56,28 +78,52 @@ export const {
   setSelectedRestaurantRequest,
   setSelectedRestaurantSuccess,
   setSelectedRestaurantError,
+  setRestaurantListEndReached,
 } = restaurantsSlice.actions;
 
 export const getRestaurants =
-  (offset: number, count: number = 10) =>
+  (lastRestaurantSnapshot: any = false, count: number = 10) =>
   async (dispatch: any) => {
     try {
-      dispatch(setRestaurantListRequest());
-      const q = query(
-        collection(firestore, "restaurants"),
-        orderBy("avgRating", "desc"),
-        orderBy("numRatings", "desc"),
-        limit(count)
+      dispatch(
+        setRestaurantListRequest({ isFetchingMore: !!lastRestaurantSnapshot })
       );
+      let q;
+      if (lastRestaurantSnapshot)
+        q = query(
+          collection(firestore, "restaurants"),
+          orderBy("avgRating", "desc"),
+          orderBy("numRatings", "desc"),
+          startAfter(lastRestaurantSnapshot),
+          limit(count)
+        );
+      else
+        q = query(
+          collection(firestore, "restaurants"),
+          orderBy("avgRating", "desc"),
+          orderBy("numRatings", "desc"),
+          limit(count)
+        );
       const querySnapshot = await getDocs(q);
       const data = [];
+      if (querySnapshot.empty) {
+        dispatch(setRestaurantListEndReached(true));
+        return;
+      }
       for (let doc of querySnapshot.docs) {
         const uri = await getDownloadURL(
           ref(storage, `restaurantImages/${doc.id}`)
         );
         data.push({ ...doc.data(), id: doc.id, imageUri: uri });
       }
-      dispatch(setRestaurantListSuccess(data));
+      dispatch(
+        setRestaurantListSuccess({
+          data,
+          lastRestaurantSnapshot:
+            querySnapshot.docs[querySnapshot.docs.length - 1],
+          isFetchingMore: !!lastRestaurantSnapshot,
+        })
+      );
     } catch (error) {
       console.log({ error });
       dispatch(setRestaurantListError());
@@ -285,9 +331,15 @@ export const selectRestaurantList = (state: any) =>
   state.restaurants?.restaurantList;
 export const selectIsFetchingRestaurantList = (state: any) =>
   state.restaurants?.fetchingRestaurantList;
+export const selectIsFetchingMoreRestaurants = (state: any) =>
+  state.restaurants?.isFetchingMoreRestaurants;
+export const selectIsRestaurantListEndReached = (state: any) =>
+  state.restaurants?.restaurantListEndReached;
 export const selectSelectedRestaurant = (state: any) =>
   state.restaurants?.selectedRestaurant;
 export const selectIsFetchingSelectedRestaurant = (state: any) =>
   state.restaurants?.fetchingSelectedRestaurant;
+export const selectLastRestaurantSnapshot = (state: any) =>
+  state.restaurants?.lastRestaurantSnapshot;
 
 export default restaurantsSlice.reducer;

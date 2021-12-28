@@ -47,7 +47,7 @@ const AddRestaurant = () => {
       const restaurantImageRef = ref(storage, `restaurantImages/${doc.id}`);
       await uploadBytes(restaurantImageRef, blob);
       dispatch(setAlertMessage("Success!"));
-      dispatch(getRestaurants(0));
+      dispatch(getRestaurants(false));
       navigation.goBack();
     } catch (err) {
       console.log({ err });
