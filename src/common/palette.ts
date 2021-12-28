@@ -9,4 +9,5 @@ export default {
   placeholder: "rgb(199,199,199)",
   border: "#ddd",
   modalBg: "rgba(0,0,0, 0.4)",
+  hyperlink: "#3366BB",
 };

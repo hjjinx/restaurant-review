@@ -1,5 +1,13 @@
+import { Entypo, FontAwesome5 } from "@expo/vector-icons";
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Linking,
+  TouchableWithoutFeedback,
+} from "react-native";
 import { useSelector } from "react-redux";
 import { auth } from "../../../firebase";
 import { AreaView, Button, Header } from "../../common/components";
@@ -21,7 +29,27 @@ const Profile = () => {
           Thank you for using our platform! If you like it, share the app with
           others. More the people that use this app, more will be it be useful!
         </Text>
+        {user.isAdmin ? (
+          <TouchableOpacity style={styles.users}>
+            <FontAwesome5 name="users" style={styles.userIcon} />
+            <Text style={styles.manageUsersText}>Manage Users</Text>
+            <Entypo name="chevron-right" style={styles.arrowIcon} />
+          </TouchableOpacity>
+        ) : (
+          <Text style={[styles.subHeading, { marginTop: 10 }]}>
+            Didn't see your favourite restaurant in the list?{" "}
+            <TouchableWithoutFeedback
+              onPress={() => Linking.openURL("mailto:support@example.com")}
+            >
+              <Text style={[styles.subHeading, styles.contactUs]}>
+                Contact us{" "}
+              </Text>
+            </TouchableWithoutFeedback>
+            to become an admin and add it yourself!
+          </Text>
+        )}
       </View>
+      <Text style={styles.footer}>Currently logged in as {user.email}</Text>
       <Button
         onPress={signOut}
         text={"Sign out"}
@@ -48,7 +76,42 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: Fonts.MontserratRegular,
     marginBottom: 5,
-    lineHeight: 20,
+    lineHeight: 24,
+  },
+  contactUs: {
+    color: palette.hyperlink,
+    fontFamily: Fonts.MontserratMedium,
+  },
+  users: {
+    backgroundColor: palette.white,
+    alignSelf: "center",
+    width: "100%",
+    flexDirection: "row",
+    padding: 15,
+    borderRadius: 5,
+    alignItems: "center",
+  },
+  userIcon: {
+    fontSize: 30,
+    color: palette.primary,
+  },
+  arrowIcon: {
+    fontSize: 25,
+    color: palette.textPrimary,
+  },
+  manageUsersText: {
+    fontFamily: Fonts.MontserratMedium,
+    color: palette.textPrimary,
+    fontSize: 18,
+    flex: 1,
+    marginHorizontal: 20,
+  },
+  footer: {
+    fontSize: 14,
+    color: palette.textPrimary,
+    fontFamily: Fonts.MontserratLight,
+    textAlign: "center",
+    marginBottom: 10,
   },
 });
 
