@@ -42,7 +42,7 @@ const Profile = ({ navigation }: any) => {
           <Text style={[styles.subHeading, { marginTop: 10 }]}>
             Didn't see your favourite restaurant in the list?{" "}
             <TouchableWithoutFeedback
-              onPress={() => Linking.openURL("mailto:support@example.com")}
+              onPress={() => Linking.openURL("mailto:hjjinx@gmail.com")}
             >
               <Text style={[styles.subHeading, styles.contactUs]}>
                 Contact us{" "}

@@ -38,9 +38,19 @@ const Register = ({ navigation }: any) => {
         });
       await setDoc(doc(firestore, "users", user.user.uid), {
         name,
+        email,
+        dateOfJoining: new Date(),
         isAdmin: false,
       });
-      dispatch(setUser({ name, email, isAdmin: false, uid: user.user.uid }));
+      dispatch(
+        setUser({
+          name,
+          email,
+          dateOfJoining: new Date(),
+          isAdmin: false,
+          uid: user.user.uid,
+        })
+      );
       dispatch(setAlertMessage("Success!"));
       setLoading(false);
     } catch (err) {
@@ -129,6 +139,7 @@ const Register = ({ navigation }: any) => {
                     text={"Register"}
                     onPress={submitForm}
                     loading={loading}
+                    disabled={loading}
                   />
                 </View>
                 <Button

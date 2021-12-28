@@ -161,7 +161,9 @@ export const getRestaurant =
             const user = await getDoc(
               doc(firestore, `users/${highestRatedReview.createdBy}`)
             );
-            highestRatedReview.createdBy = { ...user?.data(), uid: user.id };
+            if (user.exists())
+              highestRatedReview.createdBy = { ...user?.data(), uid: user.id };
+            else highestRatedReview.createdBy = { name: "Anonymous", uid: 0 };
             highestRatedReview.id = highestRatedReviewSnapshot?.docs?.[0]?.id;
           }
           resolve(highestRatedReview);
@@ -181,7 +183,9 @@ export const getRestaurant =
             const user = await getDoc(
               doc(firestore, `users/${lowestRatedReview.createdBy}`)
             );
-            lowestRatedReview.createdBy = { ...user?.data(), uid: user.id };
+            if (user.exists())
+              lowestRatedReview.createdBy = { ...user?.data(), uid: user.id };
+            else lowestRatedReview.createdBy = { name: "Anonymous", uid: 0 };
             lowestRatedReview.id = lowestRatedReviewSnapshot?.docs?.[0]?.id;
           }
           resolve(lowestRatedReview);
@@ -201,7 +205,9 @@ export const getRestaurant =
             const user = await getDoc(
               doc(firestore, `users/${latestRatedReview.createdBy}`)
             );
-            latestRatedReview.createdBy = { ...user?.data(), uid: user.id };
+            if (user.exists())
+              latestRatedReview.createdBy = { ...user?.data(), uid: user.id };
+            else latestRatedReview.createdBy = { name: "Anonymous", uid: 0 };
             latestRatedReview.id = latestRatedReviewSnapshot?.docs?.[0]?.id;
           }
           resolve(latestRatedReview);
