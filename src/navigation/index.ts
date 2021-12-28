@@ -1,4 +1,4 @@
-import AdminStackComponent from "./Admin";
+import MainTabComponent from "./MainTabs";
 import AuthenticationStackComponent from "./Authentication";
 
-export { AuthenticationStackComponent, AdminStackComponent };
+export { AuthenticationStackComponent, MainTabComponent };

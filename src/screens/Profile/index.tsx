@@ -15,7 +15,7 @@ import Fonts from "../../common/Fonts";
 import palette from "../../common/palette";
 import { selectUser } from "../../redux/user";
 
-const Profile = () => {
+const Profile = ({ navigation }: any) => {
   const user = useSelector(selectUser);
   const signOut = () => {
     auth.signOut();
@@ -30,7 +30,10 @@ const Profile = () => {
           others. More the people that use this app, more will be it be useful!
         </Text>
         {user.isAdmin ? (
-          <TouchableOpacity style={styles.users}>
+          <TouchableOpacity
+            style={styles.users}
+            onPress={() => navigation.navigate("Users")}
+          >
             <FontAwesome5 name="users" style={styles.userIcon} />
             <Text style={styles.manageUsersText}>Manage Users</Text>
             <Entypo name="chevron-right" style={styles.arrowIcon} />

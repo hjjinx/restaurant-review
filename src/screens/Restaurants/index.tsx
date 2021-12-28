@@ -72,6 +72,7 @@ const Restaurants = ({ navigation }: any) => {
                 onRefresh={() => dispatch(getRestaurants(false))}
               />
             }
+            onEndReachedThreshold={0.1}
             onEndReached={() =>
               !isFetchingMore &&
               !isEndReached &&

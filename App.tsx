@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import {
-  AdminStackComponent,
+  MainTabComponent,
   AuthenticationStackComponent,
 } from "./src/navigation";
 import { Provider, useDispatch, useSelector } from "react-redux";
@@ -40,7 +40,7 @@ const App = () => {
   return !user?.uid ? (
     <AuthenticationStackComponent />
   ) : (
-    <AdminStackComponent />
+    <MainTabComponent user={user} />
   );
 };
 

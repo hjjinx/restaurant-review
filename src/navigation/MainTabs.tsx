@@ -9,8 +9,9 @@ import AddRestaurant from "../screens/Restaurants/AddRestaurant";
 import RestaurantDetail from "../screens/Restaurant";
 import Profile from "../screens/Profile";
 import AddReview from "../screens/Restaurant/AddReview";
+import Users from "../screens/Users";
 
-const AdminTabs = createBottomTabNavigator();
+const MainTabs = createBottomTabNavigator();
 
 const renderTabBarIcon = (
   routeName: string,
@@ -38,9 +39,9 @@ const renderTabBarIcon = (
   }
 };
 
-function AdminStackComponent() {
+export default function MainTabComponent({ user }: { user: any }) {
   return (
-    <AdminTabs.Navigator
+    <MainTabs.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
           return renderTabBarIcon(route.name, focused, color, size);
@@ -53,12 +54,19 @@ function AdminStackComponent() {
         },
       })}
     >
-      <AdminTabs.Screen
+      <MainTabs.Screen
         name="Restaurants"
         component={RestaurantStackComponent}
       />
-      <AdminTabs.Screen name="Profile" component={Profile} />
-    </AdminTabs.Navigator>
+      {user?.isAdmin ? (
+        <MainTabs.Screen
+          name="Profile"
+          component={AdminProfileStackComponent}
+        />
+      ) : (
+        <MainTabs.Screen name="Profile" component={Profile} />
+      )}
+    </MainTabs.Navigator>
   );
 }
 
@@ -81,4 +89,16 @@ const RestaurantStackComponent = () => {
   );
 };
 
-export default AdminStackComponent;
+const AdminProfileStack = createNativeStackNavigator();
+const AdminProfileStackComponent = () => {
+  return (
+    <AdminProfileStack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <AdminProfileStack.Screen name="Profile" component={Profile} />
+      <AdminProfileStack.Screen name="Users" component={Users} />
+    </AdminProfileStack.Navigator>
+  );
+};
