@@ -2,6 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import commonReducer from "./common";
 import restaurantsReducer from "./restaurants";
 import userReducer from "./user";
+import reviewsReducer from "./reviews";
 import {
   persistStore,
   persistReducer,
@@ -26,6 +27,7 @@ const combinedReducer = combineReducers({
   common: commonReducer,
   restaurants: restaurantsReducer,
   user: userReducer,
+  reviews: reviewsReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, combinedReducer);

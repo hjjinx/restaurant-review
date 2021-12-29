@@ -35,14 +35,9 @@ const RestaurantDetail = ({ navigation, route }: any) => {
   const fetchingRestaurant = useSelector(selectIsFetchingSelectedRestaurant);
   const [loading, setLoading] = useState(false);
   const [userRating, setUserRating] = useState(0);
-  const _getRestaurant = async (restaurantId: string) => {
-    try {
-      dispatch(getRestaurant(restaurantId, user));
-      setLoading(false);
-    } catch (err) {
-      console.log({ err });
-    }
-  };
+  const _getRestaurant = (restaurantId: string) =>
+    dispatch(getRestaurant(restaurantId, user));
+
   useEffect(() => {
     _getRestaurant(restaurantId);
   }, []);
@@ -166,7 +161,12 @@ const RestaurantDetail = ({ navigation, route }: any) => {
               <Text style={styles.address}>{restaurant?.address}</Text>
               <View style={styles.reviewSummaryContainer}>
                 <Text style={styles.reviewSummaryText}>Review Summary</Text>
-                <View style={{ marginTop: 10 }}>
+                <TouchableOpacity
+                  style={{ marginTop: 10 }}
+                  onPress={() =>
+                    navigation.navigate("ReviewsList", { restaurant })
+                  }
+                >
                   <Text style={styles.ratingCategoryText}>
                     Overall Average Rating
                   </Text>
@@ -193,7 +193,7 @@ const RestaurantDetail = ({ navigation, route }: any) => {
                   <Text style={styles.numRatings}>
                     Based on {restaurant?.numRatings} Review(s)
                   </Text>
-                </View>
+                </TouchableOpacity>
               </View>
               {!restaurant?.loggedInUserReview && (
                 <View style={styles.reviewSummaryContainer}>

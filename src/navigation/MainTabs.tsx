@@ -10,6 +10,7 @@ import RestaurantDetail from "../screens/Restaurant";
 import Profile from "../screens/Profile";
 import AddReview from "../screens/Restaurant/AddReview";
 import Users from "../screens/Users";
+import Reviews from "../screens/Restaurant/Reviews";
 
 const MainTabs = createBottomTabNavigator();
 
@@ -85,6 +86,7 @@ const RestaurantStackComponent = () => {
         component={RestaurantDetail}
       />
       <RestaurantStack.Screen name="AddReview" component={AddReview} />
+      <RestaurantStack.Screen name="ReviewsList" component={Reviews} />
     </RestaurantStack.Navigator>
   );
 };

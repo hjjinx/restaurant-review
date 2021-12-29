@@ -72,7 +72,7 @@ const AddReview = ({ navigation, route }: any) => {
       setLoading(false);
       dispatch(setAlertMessage("There was an error!"));
     }
-    navigation.goBack();
+    navigation.navigate("RestaurantDetail");
   };
   return (
     <AreaView noScroll>
