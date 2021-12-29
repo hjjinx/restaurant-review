@@ -16,7 +16,7 @@ interface ITextArea {
   label?: string;
   labelStyle?: StyleProp<TextStyle>;
   height?: number;
-  error?: string | false | undefined;
+  error?: any;
 }
 
 const TextArea = ({

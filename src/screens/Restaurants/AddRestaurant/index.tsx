@@ -12,13 +12,14 @@ import * as Yup from "yup";
 import { View, StyleSheet, Platform } from "react-native";
 import palette from "../../../common/palette";
 import { firestore, storage } from "../../../../firebase";
-import { addDoc, collection } from "firebase/firestore";
-import { useDispatch } from "react-redux";
+import { addDoc, collection, updateDoc, doc } from "firebase/firestore";
+import { useDispatch, useSelector } from "react-redux";
 import { setAlertMessage } from "../../../redux/common";
 import { ref, uploadBytes } from "firebase/storage";
 import { useNavigation } from "@react-navigation/native";
 import { convertFileUriToBlob } from "../../../common/utils";
-import { getRestaurants } from "../../../redux/restaurants";
+import { getRestaurant, getRestaurants } from "../../../redux/restaurants";
+import { selectUser } from "../../../redux/user";
 
 const formSchema = Yup.object().shape({
   name: Yup.string().required("Name is required!"),
@@ -26,7 +27,9 @@ const formSchema = Yup.object().shape({
   image: Yup.object().required("Image is required!"),
 });
 
-const AddRestaurant = () => {
+const AddRestaurant = ({ route }: any) => {
+  const restaurant = route?.params?.restaurant || {};
+  const user = useSelector(selectUser);
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -55,17 +58,46 @@ const AddRestaurant = () => {
     }
     setLoading(false);
   };
+
+  const editRestaurant = async (values: any) => {
+    setLoading(true);
+    try {
+      let uri = values.image.uri;
+      const uploadUri =
+        Platform.OS === "ios" ? uri.replace("file://", "") : uri;
+      const blob = await convertFileUriToBlob(uploadUri);
+      delete values.image;
+
+      await updateDoc(doc(firestore, `restaurants/${restaurant.id}`), values);
+      const restaurantImageRef = ref(
+        storage,
+        `restaurantImages/${restaurant.id}`
+      );
+      await uploadBytes(restaurantImageRef, blob);
+      dispatch(setAlertMessage("Success!"));
+      dispatch(getRestaurants(false));
+      dispatch(getRestaurant(restaurant.id, user));
+      navigation.goBack();
+    } catch (err) {
+      console.log({ err });
+      dispatch(setAlertMessage("There was an error. Please try again later."));
+    }
+    setLoading(false);
+  };
   return (
     <AreaView>
-      <Header heading={"Add Restaurant"} canGoBack />
+      <Header
+        heading={restaurant?.name ? "Edit Restaurant" : "Add Restaurant"}
+        canGoBack
+      />
       <View style={styles.formContainer}>
         <Formik
           initialValues={{
-            name: "",
-            address: "",
-            image: "" as any,
+            name: restaurant?.name || "",
+            address: restaurant?.address || "",
+            image: restaurant ? { uri: restaurant?.imageUri } : ("" as any),
           }}
-          onSubmit={addRestaurant}
+          onSubmit={restaurant?.name ? editRestaurant : addRestaurant}
           validationSchema={formSchema}
         >
           {({
@@ -118,7 +150,7 @@ const AddRestaurant = () => {
               <View>
                 <Button
                   onPress={submitForm}
-                  text="+ Add"
+                  text={restaurant?.name ? "Edit" : "+ Add"}
                   style={{ marginTop: 10 }}
                   loading={loading}
                   disabled={loading}

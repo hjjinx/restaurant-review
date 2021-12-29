@@ -333,6 +333,9 @@ export const updateReview = async (
   });
 };
 
+export const deleteRestaurant = async (restaurantId: string) =>
+  await deleteDoc(doc(firestore, `restaurants/${restaurantId}`));
+
 export const selectRestaurantList = (state: any) =>
   state.restaurants?.restaurantList;
 export const selectIsFetchingRestaurantList = (state: any) =>

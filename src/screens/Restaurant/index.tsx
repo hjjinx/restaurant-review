@@ -1,4 +1,4 @@
-import { AntDesign, FontAwesome, FontAwesome5 } from "@expo/vector-icons";
+import { AntDesign, FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import React, { useEffect, useMemo, useState } from "react";
 import {
   ImageBackground,
@@ -17,6 +17,7 @@ import palette from "../../common/palette";
 import { roundRating } from "../../common/utils";
 import { setAlertMessage } from "../../redux/common";
 import {
+  deleteRestaurant,
   deleteReview,
   getRestaurant,
   getRestaurants,
@@ -97,6 +98,27 @@ const RestaurantDetail = ({ navigation, route }: any) => {
     });
   };
 
+  const onDeleteRestaurant = () => {
+    Alert.alert("Delete", "Are you sure you want to delete this restaurant?", [
+      {
+        text: "Yes",
+        onPress: async () => {
+          setLoading(true);
+          await deleteRestaurant(restaurant?.id);
+          dispatch(setAlertMessage("Restaurant Deleted Successfully!"));
+          dispatch(getRestaurants(false));
+          navigation.goBack();
+        },
+      },
+      { text: "Cancel", onPress: () => {} },
+    ]);
+  };
+
+  const onEditRestaurant = () =>
+    navigation.navigate("AddRestaurant", {
+      restaurant,
+    });
+
   return (
     <SafeAreaView style={styles.areaView}>
       {loading || fetchingRestaurant ? (
@@ -108,7 +130,7 @@ const RestaurantDetail = ({ navigation, route }: any) => {
         <>
           <ScrollView showsVerticalScrollIndicator={false}>
             <ImageBackground
-              style={{ width: "100%", height: 260 }}
+              style={styles.imageContainer}
               resizeMode="cover"
               source={{ uri: restaurant?.imageUri }}
             >
@@ -118,6 +140,26 @@ const RestaurantDetail = ({ navigation, route }: any) => {
               >
                 <AntDesign name="arrowleft" style={styles.chevronIcon} />
               </TouchableOpacity>
+              <View style={{ flexDirection: "row" }}>
+                <TouchableOpacity
+                  onPress={onEditRestaurant}
+                  style={[
+                    styles.backIconContainer,
+                    { backgroundColor: "#FFBD35" },
+                  ]}
+                >
+                  <MaterialIcons name="edit" style={styles.chevronIcon} />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={onDeleteRestaurant}
+                  style={[
+                    styles.backIconContainer,
+                    { backgroundColor: palette.dangerRed, marginRight: 15 },
+                  ]}
+                >
+                  <MaterialIcons name="delete" style={styles.chevronIcon} />
+                </TouchableOpacity>
+              </View>
             </ImageBackground>
             <View style={styles.box}>
               <Text style={styles.title}>{restaurant?.name}</Text>
@@ -236,6 +278,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     marginTop: -50,
     marginBottom: 20,
+  },
+  imageContainer: {
+    width: "100%",
+    height: 260,
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   backIconContainer: {
     marginLeft: 15,
