@@ -33,8 +33,16 @@ const Login = ({ navigation }: any) => {
       setLoading(true);
       const user = await signInWithEmailAndPassword(auth, email, password);
       const userData = await getDoc(doc(firestore, `users/${user.user.uid}`));
-      dispatch(setUser({ ...userData.data(), uid: user.user.uid }));
-      dispatch(setAlertMessage("Success!"));
+      if (userData.exists()) {
+        dispatch(setUser({ ...userData.data(), uid: user.user.uid }));
+        dispatch(setAlertMessage("Success!"));
+      } else {
+        dispatch(
+          setAlertMessage(
+            "Your account was deleted by an Admin. Please contact hjjinx@gmail.com in order to restore it!"
+          )
+        );
+      }
       setLoading(false);
     } catch (err) {
       console.log(JSON.stringify(err, null, 2));
