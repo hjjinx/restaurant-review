@@ -50,7 +50,7 @@ const Users = () => {
   };
 
   const onDeleteUser = (userId: any) => {
-    Alert.alert("Delete", "Are you sure you want to delete this review?", [
+    Alert.alert("Delete", "Are you sure you want to delete this user?", [
       {
         text: "Yes",
         onPress: () => _deleteUser(userId),
