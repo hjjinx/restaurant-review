@@ -1,6 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 import {
   collection,
+  deleteDoc,
+  doc,
   getDocs,
   limit,
   orderBy,
@@ -100,6 +102,9 @@ export const getUserList =
       dispatch(setUserListError());
     }
   };
+
+export const deleteUser = (userId: any) =>
+  deleteDoc(doc(firestore, `users/${userId}`));
 
 export const selectUser = (state: any) => state.user.userData;
 export const selectUserList = (state: any) => state.user.usersList;
