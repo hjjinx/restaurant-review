@@ -111,9 +111,14 @@ export const getRestaurants =
         return;
       }
       for (let doc of querySnapshot.docs) {
-        const uri = await getDownloadURL(
-          ref(storage, `restaurantImages/${doc.id}`)
-        );
+        let uri;
+        try {
+          uri = await getDownloadURL(
+            ref(storage, `restaurantImages/${doc.id}`)
+          );
+        } catch (err) {
+          uri = null;
+        }
         data.push({ ...doc.data(), id: doc.id, imageUri: uri });
       }
       dispatch(
@@ -137,9 +142,14 @@ export const getRestaurant =
       const restaurantData = await getDoc(
         doc(firestore, `restaurants/${restaurantId}`)
       );
-      const uri = await getDownloadURL(
-        ref(storage, `restaurantImages/${restaurantId}`)
-      );
+      let uri;
+      try {
+        uri = await getDownloadURL(
+          ref(storage, `restaurantImages/${restaurantId}`)
+        );
+      } catch (err) {
+        uri = null;
+      }
       let [
         highestRatedReview,
         lowestRatedReview,
