@@ -284,6 +284,7 @@ const styles = StyleSheet.create({
     height: 260,
     flexDirection: "row",
     justifyContent: "space-between",
+    backgroundColor: palette.primary,
   },
   backIconContainer: {
     marginLeft: 15,

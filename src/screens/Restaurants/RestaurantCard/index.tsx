@@ -1,6 +1,7 @@
 import { FontAwesome } from "@expo/vector-icons";
 import React from "react";
 import { View, StyleSheet, Text, Image } from "react-native";
+import images from "../../../../assets/images";
 import Fonts from "../../../common/Fonts";
 import palette from "../../../common/palette";
 import { roundRating } from "../../../common/utils";
@@ -46,7 +47,11 @@ const RestaurantCard = (props: RestaurantCardProps) => {
           </View>
         )}
       </View>
-      <Image source={image} style={styles.image} resizeMode="stretch" />
+      <Image
+        source={image?.uri ? image : images.NotFound}
+        style={styles.image}
+        resizeMode="stretch"
+      />
     </View>
   );
 };
