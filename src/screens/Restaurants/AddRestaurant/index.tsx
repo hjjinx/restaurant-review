@@ -121,6 +121,7 @@ const AddRestaurant = () => {
                   text="+ Add"
                   style={{ marginTop: 10 }}
                   loading={loading}
+                  disabled={loading}
                 />
               </View>
             </>
