@@ -18,16 +18,12 @@ const Header = (props: HeaderProps) => {
       {canGoBack && (
         <TouchableOpacity
           onPress={() => navigation.goBack()}
-          style={{
-            height: "100%",
-            justifyContent: "center",
-            width: 50,
-          }}
+          style={styles.iconContainer}
         >
           <AntDesign name="arrowleft" style={styles.leftArrowIcon} />
         </TouchableOpacity>
       )}
-      <Text style={[styles.heading, canGoBack && { marginLeft: -70 }]}>
+      <Text style={[styles.heading, canGoBack && { marginLeft: -60 }]}>
         {heading}
       </Text>
     </View>
@@ -38,11 +34,16 @@ const styles = StyleSheet.create({
   container: {
     height: 60,
     width: "100%",
-    paddingLeft: 20,
     backgroundColor: palette.primary,
     elevation: 5,
     alignItems: "center",
     flexDirection: "row",
+  },
+  iconContainer: {
+    height: "100%",
+    justifyContent: "center",
+    width: 60,
+    alignItems: "center",
   },
   leftArrowIcon: {
     fontSize: 20,

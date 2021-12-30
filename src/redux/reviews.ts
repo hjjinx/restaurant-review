@@ -81,6 +81,14 @@ export const getReviewList =
       const querySnapshot = await getDocs(q);
       const data = [];
       if (querySnapshot.empty) {
+        if (!lastReviewSnapshot)
+          dispatch(
+            setReviewListSuccess({
+              data: [],
+              lastReviewSnapshot: null,
+              isFetchingMore: false,
+            })
+          );
         dispatch(setReviewListEndReached(true));
         return;
       }

@@ -6,9 +6,11 @@ import {
   FlatList,
   RefreshControl,
   Alert,
+  Text,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { AreaView, Header } from "../../../common/components";
+import Fonts from "../../../common/Fonts";
 import palette from "../../../common/palette";
 import { roundRating } from "../../../common/utils";
 import { setAlertMessage } from "../../../redux/common";
@@ -56,6 +58,7 @@ const Reviews = ({ navigation, route }: any) => {
             dispatch(getReviewList(restaurant?.id, false));
             dispatch(getRestaurant(restaurant?.id, user));
             dispatch(getRestaurants(false));
+            navigation.navigate("RestaurantDetail");
           });
         },
       },
@@ -80,7 +83,7 @@ const Reviews = ({ navigation, route }: any) => {
         >
           <ActivityIndicator color={palette.primary} size="large" />
         </View>
-      ) : (
+      ) : reviewList?.length ? (
         <View style={styles.listContainer}>
           <FlatList
             data={reviewList}
@@ -123,6 +126,12 @@ const Reviews = ({ navigation, route }: any) => {
             }
           />
         </View>
+      ) : (
+        <View
+          style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
+        >
+          <Text style={styles.noReviewsPresentText}>No reviews present!</Text>
+        </View>
       )}
     </AreaView>
   );
@@ -133,6 +142,11 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 10,
     marginBottom: 15,
+  },
+  noReviewsPresentText: {
+    fontSize: 18,
+    color: palette.placeholder,
+    fontFamily: Fonts.MontserratRegular,
   },
 });
 
