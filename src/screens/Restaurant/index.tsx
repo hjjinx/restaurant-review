@@ -135,26 +135,28 @@ const RestaurantDetail = ({ navigation, route }: any) => {
               >
                 <AntDesign name="arrowleft" style={styles.chevronIcon} />
               </TouchableOpacity>
-              <View style={{ flexDirection: "row" }}>
-                <TouchableOpacity
-                  onPress={onEditRestaurant}
-                  style={[
-                    styles.backIconContainer,
-                    { backgroundColor: "#FFBD35" },
-                  ]}
-                >
-                  <MaterialIcons name="edit" style={styles.chevronIcon} />
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={onDeleteRestaurant}
-                  style={[
-                    styles.backIconContainer,
-                    { backgroundColor: palette.dangerRed, marginRight: 15 },
-                  ]}
-                >
-                  <MaterialIcons name="delete" style={styles.chevronIcon} />
-                </TouchableOpacity>
-              </View>
+              {user?.isAdmin && (
+                <View style={{ flexDirection: "row" }}>
+                  <TouchableOpacity
+                    onPress={onEditRestaurant}
+                    style={[
+                      styles.backIconContainer,
+                      { backgroundColor: "#FFBD35" },
+                    ]}
+                  >
+                    <MaterialIcons name="edit" style={styles.chevronIcon} />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={onDeleteRestaurant}
+                    style={[
+                      styles.backIconContainer,
+                      { backgroundColor: palette.dangerRed, marginRight: 15 },
+                    ]}
+                  >
+                    <MaterialIcons name="delete" style={styles.chevronIcon} />
+                  </TouchableOpacity>
+                </View>
+              )}
             </ImageBackground>
             <View style={styles.box}>
               <Text style={styles.title}>{restaurant?.name}</Text>
