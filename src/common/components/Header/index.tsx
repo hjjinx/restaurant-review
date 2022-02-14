@@ -44,6 +44,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     width: 60,
     alignItems: "center",
+    zIndex: 2,
   },
   leftArrowIcon: {
     fontSize: 20,

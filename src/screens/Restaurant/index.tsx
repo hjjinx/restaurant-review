@@ -77,6 +77,7 @@ const RestaurantDetail = ({ navigation, route }: any) => {
             dispatch(setAlertMessage("Review Deleted Successfully!"));
             _getRestaurant(restaurantId);
             dispatch(getRestaurants(false));
+            setLoading(false);
           });
         },
       },
